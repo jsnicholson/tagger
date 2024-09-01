@@ -1,0 +1,85 @@
+﻿@page "/"
+@* @page "/gallery" *@
+@using RestSharp
+@rendermode InteractiveServer
+@inject IRestClient _client
+@inject IJSRuntime JS
+
+<h3>Media Gallery</h3>
+
+<script>
+    function OnVideoLoaded(video) {
+        video.muted = true;
+        video.play();
+    }
+</script>
+
+<div class="container">
+    <div class="columns-lg-3 columns-md-2 columns-1">
+        @foreach (var file in files) {
+            <div class="mb-3">
+            @if (IsImage(file)) {
+                <img src="@file" alt="Media" class="img-fluid" style="object-fit:cover;" />
+            }
+            else if (IsVideo(file)) {
+                <video autoplay muted loop class="img-fluid" style="object-fit:cover;" src="@file" onloadeddata="OnVideoLoaded(this)"></video>
+            }
+            </div>
+        }
+    </div>
+</div>
+
+<button @onclick="LoadMoreMedia" class="btn btn-primary mt-3">
+    Load More
+</button>
+
+<p>@loadingMessage</p>
+
+@code {
+    private List<string> files = new(); // Master list to store media paths
+    private int batchSize = 10;
+    private int currentIndex = 0;
+    private string loadingMessage = string.Empty;
+    private bool isLoading = false;
+
+    protected override async Task OnInitializedAsync() {
+        await LoadMedia(); // Load the initial set of media when the component initializes
+    }
+
+    private async Task LoadMedia() {
+        if (isLoading) return;
+
+        isLoading = true;
+        loadingMessage = "Loading more media...";
+        try {
+            string uri = $"https://localhost:7237/api/file/absolute?startIndex={currentIndex}&count={batchSize}";
+            var newMedia = await _client.GetAsync<List<string>>(new RestRequest(uri));
+            if (newMedia != null && newMedia.Count > 0) {
+                files.AddRange(newMedia);
+                currentIndex += batchSize;
+            } else {
+                loadingMessage = "No more media available.";
+            }
+        } catch (Exception ex) {
+            Console.WriteLine($"Error loading media: {ex.Message}");
+        } finally {
+            isLoading = false;
+            loadingMessage = string.Empty;
+        }
+    }
+
+    private async Task LoadMoreMedia() {
+        await LoadMedia();
+        //await JS.InvokeVoidAsync("InitMasonry");
+    }
+
+    private bool IsImage(string filePath) {
+        var extensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".avif" }; // Add other image formats as needed
+        return extensions.Any(ext => filePath.EndsWith(ext, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private bool IsVideo(string filePath) {
+        var extensions = new[] { ".mp4", ".webm", ".ogg" }; // Add other video formats as needed
+        return extensions.Any(ext => filePath.EndsWith(ext, StringComparison.OrdinalIgnoreCase));
+    }
+}
