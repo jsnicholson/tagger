@@ -23,14 +23,24 @@ namespace Api.Controllers {
         [Route("absolute")]
         public IActionResult GetFilePathsAbsolute(int startIndex = 0, int count = 20) {
             var baseUrl = $"{Request.Scheme}://{Request.Host}/api/file";
+            var rng = new Random();
+            var allFiles = Directory.EnumerateFiles(_fileFolderPath);
+            if (startIndex >= allFiles.Count()) return Ok(new List<string>());
 
-            var images = Directory.GetFiles(_fileFolderPath)
+            var files = allFiles
+                .OrderBy(_ => rng.Next())
                 .Skip(startIndex)
                 .Take(count)
                 .Select(file => $"{baseUrl}/{Path.GetFileName(file)}")
                 .ToList();
 
-            return Ok(images);
+            /*var images = Directory.GetFiles(_fileFolderPath)
+                .Skip(startIndex)
+                .Take(count)
+                .Select(file => $"{baseUrl}/{Path.GetFileName(file)}")
+                .ToList();*/
+
+            return Ok(files);
         }
 
         [HttpGet("{fileName}")]

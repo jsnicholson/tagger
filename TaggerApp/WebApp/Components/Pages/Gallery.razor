@@ -1,9 +1,11 @@
-﻿@page "/"
-@* @page "/gallery" *@
+﻿@* @page "/" *@
+@page "/gallery"
 @using RestSharp
 @rendermode InteractiveServer
 @inject IRestClient _client
 @inject IJSRuntime JS
+@using Soenneker.Blazor.Masonry.Abstract
+@inject IMasonryInterop _masonry
 
 <h3>Media Gallery</h3>
 
@@ -15,9 +17,10 @@
 </script>
 
 <div class="container">
-    <div class="columns-lg-3 columns-md-2 columns-1">
+    @* <div class="columns-lg-3 columns-md-2 columns-1"> *@
+        <div class="row">
         @foreach (var file in files) {
-            <div class="mb-3">
+            <div class="col-12 col-md-4 mb-3">
             @if (IsImage(file)) {
                 <img src="@file" alt="Media" class="img-fluid" style="object-fit:cover;" />
             }
@@ -44,6 +47,11 @@
 
     protected override async Task OnInitializedAsync() {
         await LoadMedia(); // Load the initial set of media when the component initializes
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender) {
+        if (firstRender)
+            await _masonry.Init();
     }
 
     private async Task LoadMedia() {

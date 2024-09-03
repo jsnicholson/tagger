@@ -1,5 +1,7 @@
 using RestSharp;
+using Soenneker.Blazor.Masonry.Registrars;
 using WebApp.Components;
+using WebApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,8 +10,10 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddRazorPages();
+builder.Services.AddMasonry();
 
 builder.Services.AddScoped<IRestClient, RestClient>();
+builder.Services.AddSingleton<DataService>();
 
 var app = builder.Build();
 
