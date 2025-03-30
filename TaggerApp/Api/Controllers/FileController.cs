@@ -45,26 +45,15 @@ namespace Api.Controllers {
 
         [HttpGet("{fileName}")]
         public IActionResult GetFile(string fileName) {
-            // Build the full path to the image
             var filePath = Path.Combine(_fileFolderPath, fileName);
-
-            // Check if the file exists
-            if (!System.IO.File.Exists(filePath)) {
+            
+            if (!System.IO.File.Exists(filePath))
                 return NotFound();
-            }
-
-            // Open the file stream
+            
             var file = System.IO.File.OpenRead(filePath);
-
-            // Determine the content type (MIME type)
-            var contentType = GetContentType(fileName);
-
-            // Return the file stream with the correct content type
+            var contentType = MimeTypesMap.GetMimeType(fileName);
+            
             return File(file, contentType);
-        }
-
-        private string GetContentType(string fileName) {
-            return MimeTypesMap.GetMimeType(fileName);
         }
     }
 }
