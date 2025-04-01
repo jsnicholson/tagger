@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "create": {
+      "commandName": "Project",
+      "commandLineArgs": "create -v D:\\GitRepos\\tagger\\example-manifest\\tagger.db -o"
+    },
+    "list-files": {
+      "commandName": "Project",
+      "commandLineArgs": "list-files -v D:\\GitRepos\\tagger\\example-manifest\\tagger.db"
+    }
+  }
+}
