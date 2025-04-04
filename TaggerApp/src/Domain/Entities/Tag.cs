@@ -3,16 +3,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities {
     [Table("Tag")]
-    public class Tag {
+    public class Tag(string name) {
         [Key]
         [Column("Id")]
-        public Guid id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         [Required]
         [Column("Name")]
         [MaxLength(100)]
-        public string name { get; set; }
+        public string Name { get; set; } = name;
 
         // navigation property
-        public ICollection<TagOnFile> tagOnFiles { get; set; } = [];
+        public ICollection<TagOnFile> TagOnFiles { get; set; } = [];
     }
 }

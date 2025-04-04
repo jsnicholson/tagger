@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Repositories {
-    public interface IFileRepository
+    public interface IFileRepository : IGenericRepository<Entities.File>
     {
         public Task<IEnumerable<Entities.File>> GetFilesByTagAsync(Guid tagId);
     }

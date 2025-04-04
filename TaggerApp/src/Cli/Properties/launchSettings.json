@@ -2,11 +2,15 @@
   "profiles": {
     "create": {
       "commandName": "Project",
-      "commandLineArgs": "create -v D:\\GitRepos\\tagger\\example-manifest\\tagger.db -o"
+      "commandLineArgs": "create -m D:\\GitRepos\\tagger\\example-manifest\\tagger.db -o"
     },
     "list-files": {
       "commandName": "Project",
-      "commandLineArgs": "list-files -v D:\\GitRepos\\tagger\\example-manifest\\tagger.db"
+      "commandLineArgs": "list-files -m D:\\GitRepos\\tagger\\example-manifest\\tagger.db"
+    },
+    "list-tags": {
+      "commandName": "Project",
+      "commandLineArgs": "list-tags -m D:\\GitRepos\\tagger\\example-manifest\\tagger.db"
     }
   }
 }
