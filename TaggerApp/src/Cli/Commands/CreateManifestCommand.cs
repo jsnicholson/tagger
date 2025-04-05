@@ -1,30 +1,21 @@
-﻿using System.CommandLine;
-using Cli.Commands;
-using Domain;
+﻿using Domain;
+using System.CommandLine;
 
-namespace CLI.Commands;
+namespace Cli.Commands;
 
-public class CreateManifestCommand : BaseCommand
-{
-    private readonly DatabaseManager _databaseManager;
-
+public class CreateManifestCommand : BaseCommand {
     public static readonly Option<bool> OverwriteOption = new(
         ["-o", "--overwrite"],
         "Overwrite the manifest if it already exists"
     );
 
-    public CreateManifestCommand(DatabaseManager databaseManager)
-        : base("create", "Create a new manifest")
-    {
-        _databaseManager = databaseManager;
-
+    public CreateManifestCommand(IDatabaseManager databaseManager)
+        : base("create", "Create a new manifest", databaseManager) {
         AddOption(OverwriteOption);
-
         this.SetHandler(CreateManifestAsync, ManifestOption, OverwriteOption);
     }
 
-    private async Task CreateManifestAsync(FileInfo manifest, bool overwrite)
-    {
-        await _databaseManager.InitialiseDatabaseAsync(manifest, overwrite);
+    private async Task CreateManifestAsync(FileInfo manifest, bool overwrite) {
+        await base._databaseManager.InitialiseDatabaseAsync(manifest, overwrite);
     }
 }

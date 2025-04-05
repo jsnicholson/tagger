@@ -1,12 +1,11 @@
 ﻿using System.CommandLine;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using CLI.Commands;
+using Cli.Commands;
 using Domain;
 using Domain.Repositories;
-using Cli.Commands;
 
-namespace CLI;
+namespace Cli;
 
 internal static class Program
 {
@@ -28,7 +27,7 @@ internal static class Program
                     var factory = sp.GetRequiredService<TagDbContextFactory>();
                     return new TagOnFileRepository(factory.CreateDbContext());
                 });
-                services.AddSingleton<DatabaseManager>();
+                services.AddSingleton<IDatabaseManager, DatabaseManager>();
                 services.AddSingleton<CreateManifestCommand>();
                 services.AddSingleton<ListFilesCommand>();
                 services.AddSingleton<ListTagsCommand>();

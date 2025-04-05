@@ -1,46 +1,54 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
-namespace Domain {
-    public class DatabaseManager(TagDbContextFactory _dbContextFactory) {
-        public async Task CreateDatabaseAsync(FileInfo path, bool overwrite) {
-            if (File.Exists(path.FullName) && !overwrite) {
-                Console.WriteLine("Manifest already exists");
-                return;
-            }
-            if (File.Exists(path.FullName) && overwrite) {
-                DeleteDatabase(path.FullName);
-            }
-            if (!Directory.Exists(path.DirectoryName)) Directory.CreateDirectory(path.DirectoryName);
+namespace Domain;
 
-            _dbContextFactory.SetDatabasePath(path.FullName);
+public interface IDatabaseManager {
+    Task CreateDatabaseAsync(FileInfo path, bool overwrite);
+    Task InitialiseDatabaseAsync(FileInfo path, bool overwrite);
+    TagDbContext ConnectToDatabase(FileInfo path);
+    void DeleteDatabase(FileInfo path);
+}
 
-            using var context = _dbContextFactory.CreateDbContext();
-            await context.Database.EnsureCreatedAsync();
+public class DatabaseManager(TagDbContextFactory _dbContextFactory) : IDatabaseManager {
+    public async Task CreateDatabaseAsync(FileInfo path, bool overwrite) {
+        if (File.Exists(path.FullName) && !overwrite) {
+            Console.WriteLine("Manifest already exists");
+            return;
+        }
+        if (File.Exists(path.FullName) && overwrite) {
+            DeleteDatabase(path);
+        }
+        if (!Directory.Exists(path.DirectoryName)) Directory.CreateDirectory(path.DirectoryName);
 
-            Debug.WriteLine($"Database created at: {path.FullName}");
+        _dbContextFactory.SetDatabasePath(path.FullName);
+
+        using var context = _dbContextFactory.CreateDbContext();
+        await context.Database.EnsureCreatedAsync();
+
+        Debug.WriteLine($"Database created at: {path.FullName}");
+    }
+
+    public async Task InitialiseDatabaseAsync(FileInfo path, bool overwrite)
+    {
+        await CreateDatabaseAsync(path, overwrite);
+
+        using var context = ConnectToDatabase(path);
+
+        await context.SeedDataAsync();
+    }
+
+    public TagDbContext ConnectToDatabase(FileInfo path) {
+        if(!File.Exists(path.FullName)) {
+            throw new FileNotFoundException("Database not found", path.FullName);
         }
 
-        public async Task InitialiseDatabaseAsync(FileInfo path, bool overwrite)
-        {
-            await CreateDatabaseAsync(path, overwrite);
+        _dbContextFactory.SetDatabasePath(path.FullName);
 
-            ConnectToDatabase(path.FullName);
+        return _dbContextFactory.CreateDbContext();
+    }
 
-            await _dbContextFactory.CreateDbContext().SeedDataAsync();
-        }
-
-        public void ConnectToDatabase(string path) {
-            if(!File.Exists(path)) {
-                throw new FileNotFoundException("Vault database not found", path);
-            }
-
-            _dbContextFactory.SetDatabasePath(path);
-        }
-
-        public void DeleteDatabase(string path) {
-            _dbContextFactory.SetDatabasePath(null);
-            File.Delete(path);
-        }
+    public void DeleteDatabase(FileInfo path) {
+        _dbContextFactory.SetDatabasePath(null);
+        File.Delete(path.FullName);
     }
 }

@@ -1,27 +1,23 @@
-﻿using System.CommandLine;
-using System.CommandLine.Invocation;
+﻿using Domain;
+using System.CommandLine;
 
-namespace Cli.Commands
-{
-    public class BaseCommand : Command {
-        public static readonly Option<FileInfo> ManifestOption = new(
-            [ "--manifest", "-m" ],
-            "Path to the manifest file"
-        ) {
-            IsRequired = true,
-        };
+namespace Cli.Commands;
 
-        protected BaseCommand(string name, string description) : base(name, description) {
-            AddOption(ManifestOption);
+public class BaseCommand : Command {
+    protected readonly IDatabaseManager _databaseManager;
+    public static readonly Option<FileInfo> ManifestOption = new(
+        [ "--manifest", "-m" ],
+        "Path to the manifest file"
+    ) {
+        IsRequired = true,
+    };
 
-            this.SetHandler((FileInfo manifest) =>
-            {
-                if (!Path.IsPathRooted(manifest.FullName)) {
-                    manifest = new FileInfo(Path.GetFullPath(manifest.FullName));
-                }
+    protected BaseCommand(string name, string description, IDatabaseManager databaseManager) : base(name, description) {
+        _databaseManager = databaseManager;
+        AddOption(ManifestOption);
+    }
 
-                return Task.CompletedTask;
-            }, ManifestOption);
-        }
+    protected TagDbContext OpenManifest(FileInfo manifest) {
+        return _databaseManager.ConnectToDatabase(manifest);
     }
 }

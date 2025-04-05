@@ -1,23 +1,18 @@
-﻿using Cli.Commands;
-using Domain;
+﻿using Domain;
 using Domain.Repositories;
-using Microsoft.EntityFrameworkCore;
 using System.CommandLine;
 
-namespace CLI.Commands;
+namespace Cli.Commands;
 
 public class ListFilesCommand : BaseCommand
 {
-    public ListFilesCommand()
-        : base("list-files", "List all files in manifest") {
-
+    public ListFilesCommand(IDatabaseManager databaseManager)
+        : base("list-files", "List all files in manifest", databaseManager) {
         this.SetHandler(ListFilesAsync, ManifestOption);
     }
 
     private async Task ListFilesAsync(FileInfo manifest) {
-        var optionsBuilder = new DbContextOptionsBuilder<TagDbContext>();
-        optionsBuilder.UseSqlite($"Data Source={manifest.FullName}");
-        using var context = new TagDbContext(optionsBuilder.Options);
+        using var context = OpenManifest(manifest);
         var fileRepository = new FileRepository(context);
         var files = await fileRepository.GetAllAsync();
         foreach (var file in files) {
