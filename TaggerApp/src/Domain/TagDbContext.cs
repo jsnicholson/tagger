@@ -21,7 +21,7 @@ namespace Domain {
                 );
 
             modelBuilder.Entity<Entities.File>()
-                .Property(f => f.id)
+                .Property(f => f.Id)
                 .HasConversion(
                     v => v.ToByteArray(), // converts Guid to byte array (BLOB)
                     v => new Guid(v) // converts byte array (BLOB) to Guid
@@ -66,10 +66,8 @@ namespace Domain {
             var fileEntries = relativeFiles
                 .Where(file => !excludedFiles.Contains(Path.GetFileName(file)))
                 .Select(f => new Entities.File {
-                    id = Guid.NewGuid(),
-                    name = Path.GetFileName(f),
-                    extension = Path.GetExtension(f).Substring(1),
-                    path = f
+                    Id = Guid.NewGuid(),
+                    Path = f
                 });
 
             var fileRepository = new FileRepository(this);

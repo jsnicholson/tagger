@@ -16,7 +16,7 @@ public class ListFilesCommand : BaseCommand
         var fileRepository = new FileRepository(context);
         var files = await fileRepository.GetAllAsync();
         foreach (var file in files) {
-            Console.WriteLine($"{file.id} | {file.path}");
+            Console.WriteLine($"{file.Id} | {file.Path}");
         }
     }
 }

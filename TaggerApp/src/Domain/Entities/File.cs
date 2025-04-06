@@ -6,19 +6,11 @@ namespace Domain.Entities {
     public class File {
         [Key]
         [Column("Id")]
-        public Guid id { get; set; }
-        [Required]
-        [Column("Name")]
-        [MaxLength(255)]
-        public string name { get; set; }
-        [Required]
-        [Column("Extension")]
-        [MaxLength(10)]
-        public string extension { get; set; }
+        public Guid Id { get; set; }
         [Required]
         [Column("Path")]
         [MaxLength(500)]
-        public string path { get; set; }
+        public string Path { get; set; }
 
         // navigation property
         public ICollection<TagOnFile> tagOnFiles { get; set; } = new List<TagOnFile>();

@@ -1,16 +1,13 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-
 using DesktopApp.ViewModels;
 using DesktopApp.Views;
 
 namespace DesktopApp;
 
-public partial class App : Application
-{
-    public override void Initialize()
-    {
+public partial class App : Application {
+    public override void Initialize() {
         AvaloniaXamlLoader.Load(this);
     }
 

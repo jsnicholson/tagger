@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="RestSharp" Version="112.0.0" />
-    <PackageReference Include="Soenneker.Blazor.Masonry" Version="2.1.641" />
+    <PackageReference Include="RestSharp" Version="112.1.0" />
+    <PackageReference Include="Soenneker.Blazor.Masonry" Version="3.0.1849" />
   </ItemGroup>
 
   <ItemGroup>

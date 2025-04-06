@@ -31,14 +31,14 @@ class ListTagsCommand : BaseCommand {
         } else {
             // Try to match by ID or file name
             var file = await context.Files
-                .FirstOrDefaultAsync(f => f.id.ToString() == fileInput || f.path.Contains(fileInput));
+                .FirstOrDefaultAsync(f => f.Id.ToString() == fileInput || f.Path.Contains(fileInput));
 
             if (file == null) {
                 Console.WriteLine($"No file found matching '{fileInput}'");
                 return;
             }
 
-            tags = await tagRepository.GetTagsForFileAsync(file.id);
+            tags = await tagRepository.GetTagsForFileAsync(file.Id);
         }
 
         if(!tags.Any()) {
@@ -56,8 +56,8 @@ class ListTagsCommand : BaseCommand {
 
         using var dbContext = OpenManifest(manifestArg);
         var files = dbContext.Files
-            .Select(f => f.id.ToString())
-            .Concat(dbContext.Files.Select(f => f.path))
+            .Select(f => f.Id.ToString())
+            .Concat(dbContext.Files.Select(f => f.Path))
             .ToList();
         return files;
     }
