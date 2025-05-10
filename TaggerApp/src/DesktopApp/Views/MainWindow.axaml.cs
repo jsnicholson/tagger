@@ -2,10 +2,8 @@
 
 namespace DesktopApp.Views;
 
-public partial class MainView : UserControl
-{
-    public MainView()
-    {
+public partial class MainWindow : Window {
+    public MainWindow() {
         InitializeComponent();
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Cli.Commands;
 using Domain;
 using Domain.Repositories;
+using Domain.Extensions;
 
 namespace Cli;
 
@@ -14,20 +15,7 @@ internal static class Program
         var host = Host.CreateDefaultBuilder()
             .ConfigureServices((context, services) =>
             {
-                services.AddSingleton<TagDbContextFactory>();
-                services.AddScoped<IFileRepository>(sp => {
-                    var factory = sp.GetRequiredService<TagDbContextFactory>();
-                    return new FileRepository(factory.CreateDbContext());
-                });
-                services.AddScoped<ITagRepository>(sp => {
-                    var factory = sp.GetRequiredService<TagDbContextFactory>();
-                    return new TagRepository(factory.CreateDbContext());
-                });
-                services.AddScoped<ITagOnFileRepository>(sp => {
-                    var factory = sp.GetRequiredService<TagDbContextFactory>();
-                    return new TagOnFileRepository(factory.CreateDbContext());
-                });
-                services.AddSingleton<IDatabaseManager, DatabaseManager>();
+                services.AddTagDatabase();
                 services.AddSingleton<CreateManifestCommand>();
                 services.AddSingleton<ListFilesCommand>();
                 services.AddSingleton<ListTagsCommand>();

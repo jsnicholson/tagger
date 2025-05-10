@@ -15,9 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cli", "src\Cli\Cli.csproj",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.Test", "test\Domain.Test\Domain.Test.csproj", "{E2353D3A-A9F9-48E4-98D8-79980F9C2D4D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DesktopApp", "DesktopApp\DesktopApp.csproj", "{88FEC378-88DA-41A0-BA8B-2B7F3468E65E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DesktopApp", "src\DesktopApp\DesktopApp.csproj", "{88FEC378-88DA-41A0-BA8B-2B7F3468E65E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DesktopApp.Desktop", "DesktopApp.Desktop\DesktopApp.Desktop.csproj", "{A8D83691-BD2C-4780-98AF-C9BB5BBBD1A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DesktopApp.Desktop", "src\DesktopApp.Desktop\DesktopApp.Desktop.csproj", "{A8D83691-BD2C-4780-98AF-C9BB5BBBD1A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -15,21 +15,21 @@ namespace Domain.Repositories {
         : GenericRepository<TagOnFile>(context), ITagOnFileRepository
     {
         public async Task AddTagToFileAsync(Guid tagId, Guid fileId) {
-            var tagOnFile = new TagOnFile { tagId = tagId, fileId = fileId };
+            var tagOnFile = new TagOnFile(tagId, fileId);
             await _dbSet.AddAsync(tagOnFile);
             await _context.SaveChangesAsync();
         }
 
         public async Task AddTagsToFileAsync(List<Guid> tagIds, Guid fileId)
         {
-            var tagsOnFile = tagIds.Select(t => new TagOnFile { tagId = t, fileId = fileId });
+            var tagsOnFile = tagIds.Select(t => new TagOnFile(t, fileId));
             await _dbSet.AddRangeAsync(tagsOnFile);
             await _context.SaveChangesAsync();
         }
 
         public async Task AddTagsToFilesAsync(List<(Guid tagId, Guid fileId)> ids)
         {
-            var tagsOnFiles = ids.Select(t => new TagOnFile { tagId = t.tagId, fileId = t.fileId });
+            var tagsOnFiles = ids.Select(t => new TagOnFile(t.tagId, t.fileId));
             await _dbSet.AddRangeAsync(tagsOnFiles);
             await _context.SaveChangesAsync();
         }
@@ -44,8 +44,8 @@ namespace Domain.Repositories {
 
         public async Task RemoveTagsFromFileAsync(List<Guid> tagIds, Guid fileId)
         {
-            var tagsOnFile = await _dbSet.Where(tag => tagIds.Contains(tag.tagId) && tag.fileId == fileId).ToListAsync();
-            if (tagsOnFile.Any())
+            var tagsOnFile = await _dbSet.Where(tag => tagIds.Contains(tag.TagId) && tag.FileId == fileId).ToListAsync();
+            if (tagsOnFile.Count != 0)
             {
                 _dbSet.RemoveRange(tagsOnFile);
                 await _context.SaveChangesAsync();
@@ -55,10 +55,10 @@ namespace Domain.Repositories {
         public async Task RemoveTagsFromFilesAsync(List<(Guid tagId, Guid fileId)> ids)
         {
             var tagsOnFiles = await _dbSet
-                .Where(t => ids.Any(id => id.tagId == t.tagId && id.fileId == t.fileId))
+                .Where(t => ids.Any(id => id.tagId == t.TagId && id.fileId == t.FileId))
                 .ToListAsync();
 
-            if (tagsOnFiles.Any())
+            if (tagsOnFiles.Count != 0)
             {
                 _dbSet.RemoveRange(tagsOnFiles);
                 await _context.SaveChangesAsync();

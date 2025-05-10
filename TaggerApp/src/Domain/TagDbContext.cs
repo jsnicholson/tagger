@@ -28,17 +28,17 @@ namespace Domain {
                 );
 
             modelBuilder.Entity<TagOnFile>()
-                .HasKey(tof => new { tof.tagId, tof.fileId });
+                .HasKey(tof => new { tof.TagId, tof.FileId });
 
             modelBuilder.Entity<TagOnFile>()
-                .Property(t => t.tagId)
+                .Property(t => t.TagId)
                 .HasConversion(
                     v => v.ToByteArray(), // converts Guid to byte array (BLOB)
                     v => new Guid(v) // converts byte array (BLOB) to Guid
                 );
 
             modelBuilder.Entity<TagOnFile>()
-                .Property(f => f.fileId)
+                .Property(f => f.FileId)
                 .HasConversion(
                     v => v.ToByteArray(), // converts Guid to byte array (BLOB)
                     v => new Guid(v) // converts byte array (BLOB) to Guid
@@ -65,10 +65,7 @@ namespace Domain {
             };
             var fileEntries = relativeFiles
                 .Where(file => !excludedFiles.Contains(Path.GetFileName(file)))
-                .Select(f => new Entities.File {
-                    Id = Guid.NewGuid(),
-                    Path = f
-                });
+                .Select(path => new Entities.File(path));
 
             var fileRepository = new FileRepository(this);
             await fileRepository.AddAsync(fileEntries);

@@ -11,8 +11,8 @@ namespace Domain.Repositories {
     {
         public async Task<IEnumerable<Tag>> GetTagsForFileAsync(Guid fileId) {
             return await context.TagsOnFiles
-                .Where(tof => tof.fileId == fileId)
-                .Select(tof => tof.tag)
+                .Where(tof => tof.FileId == fileId)
+                .Select(tof => tof.Tag)
                 .ToListAsync();
         }
     }

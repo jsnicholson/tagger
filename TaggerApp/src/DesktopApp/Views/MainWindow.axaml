@@ -8,5 +8,5 @@
         x:Class="DesktopApp.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="DesktopApp">
-        <views:MainView />
+        <views:MainView TextElement.Foreground="Black"/>
 </Window>

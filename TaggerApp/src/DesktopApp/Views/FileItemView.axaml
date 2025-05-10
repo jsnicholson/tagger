@@ -2,6 +2,8 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     x:Class="DesktopApp.Views.FileItemView"
+    xmlns:vm="clr-namespace:DesktopApp.ViewModels"
+    x:DataType="vm:FileItemViewModel"
     Width="150"
     Height="150">
 
@@ -16,7 +18,8 @@
       <TextBlock Text="{Binding Path}"
                  TextWrapping="Wrap"
                  HorizontalAlignment="Center"
-                 Margin="5,10,5,0"/>
+                 Margin="5,10,5,0"
+                 Foreground="Black"/>
     </StackPanel>
   </Border>
 </UserControl>
