@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Domain.Entities;
 
 [Table("Tag")]
-public class Tag(string name) {
+public class Tag(string name) : Entity {
     [Key]
     [Required]
     [Column("Id")]
@@ -16,4 +16,6 @@ public class Tag(string name) {
 
     // navigation property
     public ICollection<TagOnFile> TagOnFiles { get; set; } = [];
+    public ICollection<TagOnTag> TagsTagged { get; set; } = []; // Tags this tag applies
+    public ICollection<TagOnTag> TaggedBy { get; set; } = [];    // Tags that apply to this tag
 }

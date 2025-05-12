@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Domain.Entities;
 
 [Table("File")]
-public class File(string path) {
+public class File(string path) : Entity {
     [Key]
     [Required]
     [Column("Id")]
@@ -15,5 +15,5 @@ public class File(string path) {
     public string Path { get; set; } = path;
 
     // navigation property
-    public ICollection<TagOnFile> TagOnFiles { get; set; } = [];
+    public ICollection<TagOnFile> TagsOnFile { get; set; } = [];
 }
