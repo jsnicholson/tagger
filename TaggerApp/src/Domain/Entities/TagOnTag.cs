@@ -6,6 +6,8 @@ namespace Domain.Entities;
 
 [Table("TagOnTag")]
 public class TagOnTag(Guid taggerId, Guid taggedId) : Entity {
+    public TagOnTag() : this(Guid.Empty, Guid.Empty) {} // test-compatible constructor
+    
     [Required]
     [Column("TaggerId")]
     public Guid TaggerId { get; set; } = taggerId;

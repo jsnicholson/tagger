@@ -9,20 +9,21 @@ public interface IDatabaseManager {
     void DeleteDatabase(FileInfo path);
 }
 
-public class DatabaseManager(TagDbContextFactory _dbContextFactory) : IDatabaseManager {
+public class DatabaseManager(TagDbContextFactory dbContextFactory) : IDatabaseManager {
     public async Task CreateDatabaseAsync(FileInfo path, bool overwrite) {
         if (File.Exists(path.FullName) && !overwrite) {
-            Console.WriteLine("Manifest already exists");
+            Debug.WriteLine("Manifest already exists");
             return;
         }
-        if (File.Exists(path.FullName) && overwrite) {
+        if (File.Exists(path.FullName) && overwrite)
             DeleteDatabase(path);
-        }
-        if (!Directory.Exists(path.DirectoryName)) Directory.CreateDirectory(path.DirectoryName);
+        
+        if (!Directory.Exists(path.DirectoryName) && path.DirectoryName != null)
+            Directory.CreateDirectory(path.DirectoryName);
 
-        _dbContextFactory.SetDatabasePath(path.FullName);
+        dbContextFactory.SetDatabasePath(path.FullName);
 
-        using var context = _dbContextFactory.CreateDbContext();
+        await using var context = dbContextFactory.CreateDbContext();
         await context.Database.EnsureCreatedAsync();
 
         Debug.WriteLine($"Database created at: {path.FullName}");
@@ -32,7 +33,7 @@ public class DatabaseManager(TagDbContextFactory _dbContextFactory) : IDatabaseM
     {
         await CreateDatabaseAsync(path, overwrite);
 
-        using var context = ConnectToDatabase(path);
+        await using var context = ConnectToDatabase(path);
 
         await context.SeedDataAsync();
     }
@@ -42,13 +43,13 @@ public class DatabaseManager(TagDbContextFactory _dbContextFactory) : IDatabaseM
             throw new FileNotFoundException("Database not found", path.FullName);
         }
 
-        _dbContextFactory.SetDatabasePath(path.FullName);
+        dbContextFactory.SetDatabasePath(path.FullName);
 
-        return _dbContextFactory.CreateDbContext();
+        return dbContextFactory.CreateDbContext();
     }
 
     public void DeleteDatabase(FileInfo path) {
-        _dbContextFactory.SetDatabasePath(null);
+        dbContextFactory.SetDatabasePath(null);
         File.Delete(path.FullName);
     }
 }

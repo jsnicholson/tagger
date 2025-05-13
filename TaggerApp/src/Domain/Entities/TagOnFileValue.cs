@@ -5,13 +5,20 @@ using Microsoft.EntityFrameworkCore;
 namespace Domain.Entities;
 
 [Table("TagOnFileValue")]
-public class TagOnFileValue(Guid fileId, Guid tagId, string value) : Entity
-{
-    [Required] public Guid FileId { get; set; } = fileId;
+public class TagOnFileValue : Entity {
+    public TagOnFileValue() {} // test-compatible constructor
 
-    [Required] public Guid TagId { get; set; } = tagId;
+    public TagOnFileValue(Guid fileId, Guid tagId, string value) {
+        FileId = fileId;
+        TagId = tagId;
+        Value = value;
+    }
+    
+    [Required] public Guid FileId { get; set; }
 
-    [Required] [MaxLength(500)] public string Value { get; set; } = value; // e.g. "5", "urgent", etc.
+    [Required] public Guid TagId { get; set; }
+
+    [Required] [MaxLength(500)] public string Value { get; set; } // e.g. "5", "urgent", etc.
 
     public TagOnFile TagOnFile { get; set; } = null!;
 
@@ -20,10 +27,5 @@ public class TagOnFileValue(Guid fileId, Guid tagId, string value) : Entity
         var builder = modelBuilder.Entity<TagOnFileValue>();
 
         builder.HasKey(x => new { x.FileId, x.TagId });
-
-        builder.HasOne(x => x.TagOnFile)
-            .WithOne() // optionally: .WithOne(tof => tof.Value)
-            .HasForeignKey<TagOnFileValue>(x => new { x.FileId, x.TagId })
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }

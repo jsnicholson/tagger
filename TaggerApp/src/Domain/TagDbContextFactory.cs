@@ -2,15 +2,12 @@
 
 namespace Domain
 {
-    public class TagDbContextFactory {
-        private readonly IServiceProvider _serviceProvider;
+    public class TagDbContextFactory(IServiceProvider serviceProvider)
+    {
+        private readonly IServiceProvider _serviceProvider = serviceProvider;
         private string? _databasePath;
 
-        public TagDbContextFactory(IServiceProvider serviceProvider) {
-            _serviceProvider = serviceProvider;
-        }
-
-        public void SetDatabasePath(string path) {
+        public void SetDatabasePath(string? path) {
             _databasePath = path;
         }
 

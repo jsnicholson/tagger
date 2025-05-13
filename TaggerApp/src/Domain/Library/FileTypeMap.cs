@@ -59,9 +59,7 @@
             var extension = Path.GetExtension(path).Substring(1);
             var result = fileTypes.Find(f => f.Extension == extension);
 
-            if (result != null) return result;
-
-            return new(extension, "unknown", "unknown");
+            return result ?? new FileTypeInfo(extension, "unknown", "unknown");
         }
 
         public static string GetFileType(string path) {

@@ -6,17 +6,23 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Domain.Entities;
 
 [Table("TagOnFile")]
-public class TagOnFile(Guid tagId, Guid fileId) : Entity {
+public class TagOnFile : Entity {
+    public TagOnFile() {} // EF-compatible constructor
+    public TagOnFile(Guid tagId, Guid fileId) {
+        TagId = tagId;
+        FileId = fileId;
+    }
+    
     [Required]
     [Column("TagId")]
-    public Guid TagId { get; set; } = tagId;
+    public Guid TagId { get; set; }
     [Required]
     [Column("FileId")]
-    public Guid FileId { get; set; } = fileId;
+    public Guid FileId { get; set; }
 
     // navigation properties
-    [ForeignKey("TagId")] public Tag Tag { get; set; } = null!;
-    [ForeignKey("FileId")] public File File { get; set; } = null!;
+    public Tag Tag { get; set; } = null!;
+    public File File { get; set; } = null!;
     public TagOnFileValue? Value { get; set; }
 
     public override void ConfigureEntity(ModelBuilder modelBuilder) {
@@ -36,7 +42,8 @@ public class TagOnFile(Guid tagId, Guid fileId) : Entity {
         
         builder.HasOne(t => t.Value)
             .WithOne(v => v.TagOnFile)
-            .HasForeignKey<TagOnFileValue>(v => new { v.FileId, v.TagId });
+            .HasForeignKey<TagOnFileValue>(v => new { v.FileId, v.TagId })
+            .OnDelete(DeleteBehavior.Cascade);
 
     }
 }

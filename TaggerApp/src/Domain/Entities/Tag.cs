@@ -1,10 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.CompilerServices;
 
 namespace Domain.Entities;
 
 [Table("Tag")]
-public class Tag(string name) : Entity {
+public class Tag : Entity {
+    public Tag() {} // test-compatible constructor
+    public Tag(string name) {
+        Name = name;
+    }
+
     [Key]
     [Required]
     [Column("Id")]
@@ -12,7 +18,7 @@ public class Tag(string name) : Entity {
     [Required]
     [Column("Name")]
     [MaxLength(100)]
-    public string Name { get; set; } = name;
+    public string Name { get; set; }
 
     // navigation property
     public ICollection<TagOnFile> TagOnFiles { get; set; } = [];

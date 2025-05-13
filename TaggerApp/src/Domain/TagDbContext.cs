@@ -1,26 +1,27 @@
-﻿using Domain.Entities;
+﻿using System.Linq.Expressions;
+using Domain.Entities;
 using Domain.Extensions;
 using Domain.Repositories;
-using Meta.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System.IO;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Domain {
     public class TagDbContext(DbContextOptions<TagDbContext> options) : DbContext(options)
     {
-        public DbSet<Tag> Tags { get; set; }
-        public DbSet<Entities.File> Files { get; set; }
-        public DbSet<TagOnFile> TagsOnFiles { get; set; }
+        public DbSet<Tag> Tags { get; init; }
+        public DbSet<Entities.File> Files { get; init; }
+        public DbSet<TagOnFile> TagsOnFiles { get; init; }
+        public DbSet<TagOnFileValue> TagsOnFilesValues { get; init; }
+        public DbSet<TagOnTag> TagsOnTags { get; init; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var baseEntityType = typeof(Entity);
             var entityTypes = Assembly.GetExecutingAssembly()
                 .GetTypes()
-                .Where(t => t.IsClass && !t.IsAbstract && baseEntityType.IsAssignableFrom(t));
+                .Where(t => t is { IsClass: true, IsAbstract: false } && baseEntityType.IsAssignableFrom(t)).ToList();
             
             ApplyGuidConversions(entityTypes, modelBuilder);
             ApplyOverriddenEntityConfiguration(entityTypes, modelBuilder);
@@ -29,7 +30,7 @@ namespace Domain {
                 .HasKey(tot => new { tot.TaggerId, tot.TaggedId });
         }
 
-        private static void ApplyOverriddenEntityConfiguration(IEnumerable<Type> entityTypes, ModelBuilder modelBuilder)  {
+        private static void ApplyOverriddenEntityConfiguration(List<Type> entityTypes, ModelBuilder modelBuilder)  {
             foreach (var entityType in entityTypes) {
                 if (entityType.GetMethod("ConfigureEntity")?.DeclaringType == typeof(Entity)) continue;
 
@@ -38,45 +39,33 @@ namespace Domain {
             }
         }
 
-        private static void ApplyGuidConversions(IEnumerable<Type> entityTypes, ModelBuilder modelBuilder) {
-            foreach (var entityType in entityTypes) {
-                var entityBuilder = modelBuilder.Entity(entityType);
-                ApplyGuidConversion(entityType, entityBuilder);
+        private static void ApplyGuidConversions(List<Type> entityTypes, ModelBuilder modelBuilder) {
+            var guidConverter = new ValueConverter<Guid, byte[]>(
+                g => g.ToByteArray(),
+                b => new Guid(b)
+            );
+
+            var nullableGuidConverter = new ValueConverter<Guid?, byte[]?>(
+                g => g.HasValue ? g.Value.ToByteArray() : null,
+                b => b != null ? new Guid(b) : (Guid?)null
+            );
+
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                foreach (var property in entityType.GetProperties())
+                {
+                    if (property.ClrType == typeof(Guid))
+                    {
+                        property.SetValueConverter(guidConverter);
+                    }
+                    else if (property.ClrType == typeof(Guid?))
+                    {
+                        property.SetValueConverter(nullableGuidConverter);
+                    }
+                }
             }
         }
         
-        private static void ApplyGuidConversion(Type entityType, EntityTypeBuilder builder) {
-            var guidProps = entityType
-                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(p => p.PropertyType == typeof(Guid));
-
-            foreach (var prop in guidProps)
-            {
-                // Use generic method to create a PropertyBuilder<Guid>
-                var method = typeof(EntityTypeBuilder)
-                    .GetMethods()
-                    .First(m => m.Name == "Property" && m.GetParameters().Length == 1)
-                    .MakeGenericMethod(typeof(Guid));
-
-                var propertyBuilder = method.Invoke(builder, new object[] { prop.Name });
-
-                // Get the HasConversion method from PropertyBuilder<Guid>
-                var hasConversionMethod = propertyBuilder
-                    .GetType()
-                    .GetMethods()
-                    .First(m => m.Name == "HasConversion" &&
-                                m.GetParameters().Length == 2 &&
-                                m.GetParameters()[0].ParameterType.Name.StartsWith("Expression"));
-
-                // Build lambda expressions: Guid => byte[], byte[] => Guid
-                var toProvider = (Func<Guid, byte[]>) (g => g.ToByteArray());
-                var fromProvider = (Func<byte[], Guid>) (b => new Guid(b));
-
-                // Call HasConversion with lambdas
-                hasConversionMethod.Invoke(propertyBuilder, [toProvider, fromProvider]);
-            }
-        }
-
         public async Task SeedDataAsync() {
             // avoid re-seeding
             if (Files.Any()) return;
@@ -88,8 +77,9 @@ namespace Domain {
 
         private async Task SeedFilesAsync() {
             var dbPath = new FileInfo(Database.GetDatabasePath());
-            var absoluteFiles = FileSystemRepository.GetAllFilePaths(dbPath.DirectoryName);
-            var relativeFiles = absoluteFiles.Select(f => Path.GetRelativePath(dbPath.DirectoryName, f)).ToList();
+            if (dbPath == null) throw new ArgumentNullException($"Cannot seed to database at null path");
+            var absoluteFiles = FileSystemRepository.GetAllFilePaths(dbPath.DirectoryName!);
+            var relativeFiles = absoluteFiles.Select(f => Path.GetRelativePath(dbPath.DirectoryName!, f)).ToList();
             var excludedFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
                 dbPath.Name,
                 $"{dbPath.Name}-shm",

@@ -1,15 +1,13 @@
 ﻿using Domain.Library;
 
-namespace Meta.Domain.Repositories;
+namespace Domain.Repositories;
 
-public class FileSystemRepository
-{
+public static class FileSystemRepository {
     public static IEnumerable<string> GetAllFilePaths(string path) {
         return Directory.GetFiles(path, "*.*", SearchOption.AllDirectories).ToList();
     }
 
-    public static IEnumerable<string> GetAllSubfolders(string path)
-    {
+    public static IEnumerable<string> GetAllSubfolders(string path) {
         return Directory.GetDirectories(path, "*", SearchOption.AllDirectories).ToList();
     }
 

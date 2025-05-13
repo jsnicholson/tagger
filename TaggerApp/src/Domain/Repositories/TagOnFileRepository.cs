@@ -16,57 +16,57 @@ namespace Domain.Repositories {
     {
         public async Task AddTagToFileAsync(Guid tagId, Guid fileId) {
             var tagOnFile = new TagOnFile(tagId, fileId);
-            await _dbSet.AddAsync(tagOnFile);
-            await _context.SaveChangesAsync();
+            await DbSet.AddAsync(tagOnFile);
+            await Context.SaveChangesAsync();
         }
 
         public async Task AddTagsToFileAsync(List<Guid> tagIds, Guid fileId)
         {
             var tagsOnFile = tagIds.Select(t => new TagOnFile(t, fileId));
-            await _dbSet.AddRangeAsync(tagsOnFile);
-            await _context.SaveChangesAsync();
+            await DbSet.AddRangeAsync(tagsOnFile);
+            await Context.SaveChangesAsync();
         }
 
         public async Task AddTagsToFilesAsync(List<(Guid tagId, Guid fileId)> ids)
         {
             var tagsOnFiles = ids.Select(t => new TagOnFile(t.tagId, t.fileId));
-            await _dbSet.AddRangeAsync(tagsOnFiles);
-            await _context.SaveChangesAsync();
+            await DbSet.AddRangeAsync(tagsOnFiles);
+            await Context.SaveChangesAsync();
         }
 
         public async Task RemoveTagFromFileAsync(Guid tagId, Guid fileId) {
-            var tagOnFile = await _dbSet.FindAsync(tagId, fileId);
+            var tagOnFile = await DbSet.FindAsync(tagId, fileId);
             if (tagOnFile != null) {
-                _dbSet.Remove(tagOnFile);
-                await _context.SaveChangesAsync();
+                DbSet.Remove(tagOnFile);
+                await Context.SaveChangesAsync();
             }
         }
 
         public async Task RemoveTagsFromFileAsync(List<Guid> tagIds, Guid fileId)
         {
-            var tagsOnFile = await _dbSet.Where(tag => tagIds.Contains(tag.TagId) && tag.FileId == fileId).ToListAsync();
+            var tagsOnFile = await DbSet.Where(tag => tagIds.Contains(tag.TagId) && tag.FileId == fileId).ToListAsync();
             if (tagsOnFile.Count != 0)
             {
-                _dbSet.RemoveRange(tagsOnFile);
-                await _context.SaveChangesAsync();
+                DbSet.RemoveRange(tagsOnFile);
+                await Context.SaveChangesAsync();
             }
         }
 
         public async Task RemoveTagsFromFilesAsync(List<(Guid tagId, Guid fileId)> ids)
         {
-            var tagsOnFiles = await _dbSet
+            var tagsOnFiles = await DbSet
                 .Where(t => ids.Any(id => id.tagId == t.TagId && id.fileId == t.FileId))
                 .ToListAsync();
 
             if (tagsOnFiles.Count != 0)
             {
-                _dbSet.RemoveRange(tagsOnFiles);
-                await _context.SaveChangesAsync();
+                DbSet.RemoveRange(tagsOnFiles);
+                await Context.SaveChangesAsync();
             }
         }
 
-        public async Task<TagOnFile> GetTagOnFileAsync(Guid tagId, Guid fileId) {
-            return await _dbSet.FindAsync(tagId, fileId);
+        public async Task<TagOnFile?> GetTagOnFileAsync(Guid tagId, Guid fileId) {
+            return await DbSet.FindAsync(tagId, fileId);
         }
     }
 }
