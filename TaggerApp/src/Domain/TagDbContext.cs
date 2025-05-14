@@ -1,38 +1,40 @@
 ﻿using System.Linq.Expressions;
+using System.Reflection;
+
 using Domain.Entities;
 using Domain.Extensions;
 using Domain.Repositories;
+
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Domain {
-    public class TagDbContext(DbContextOptions<TagDbContext> options) : DbContext(options)
-    {
+    public class TagDbContext(DbContextOptions<TagDbContext> options) : DbContext(options) {
         public DbSet<Tag> Tags { get; init; }
         public DbSet<Entities.File> Files { get; init; }
         public DbSet<TagOnFile> TagsOnFiles { get; init; }
         public DbSet<TagOnFileValue> TagsOnFilesValues { get; init; }
         public DbSet<TagOnTag> TagsOnTags { get; init; }
-        
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder) {
             var baseEntityType = typeof(Entity);
             var entityTypes = Assembly.GetExecutingAssembly()
                 .GetTypes()
                 .Where(t => t is { IsClass: true, IsAbstract: false } && baseEntityType.IsAssignableFrom(t)).ToList();
-            
+
             ApplyGuidConversions(entityTypes, modelBuilder);
             ApplyOverriddenEntityConfiguration(entityTypes, modelBuilder);
-            
+
             modelBuilder.Entity<TagOnTag>()
                 .HasKey(tot => new { tot.TaggerId, tot.TaggedId });
         }
 
-        private static void ApplyOverriddenEntityConfiguration(List<Type> entityTypes, ModelBuilder modelBuilder)  {
+        private static void ApplyOverriddenEntityConfiguration(List<Type> entityTypes, ModelBuilder modelBuilder) {
             foreach (var entityType in entityTypes) {
-                if (entityType.GetMethod("ConfigureEntity")?.DeclaringType == typeof(Entity)) continue;
+                if (entityType.GetMethod("ConfigureEntity")?.DeclaringType == typeof(Entity)) {
+                    continue;
+                }
 
                 var instance = Activator.CreateInstance(entityType) as Entity;
                 instance?.ConfigureEntity(modelBuilder);
@@ -50,26 +52,23 @@ namespace Domain {
                 b => b != null ? new Guid(b) : (Guid?)null
             );
 
-            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
-            {
-                foreach (var property in entityType.GetProperties())
-                {
-                    if (property.ClrType == typeof(Guid))
-                    {
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes()) {
+                foreach (var property in entityType.GetProperties()) {
+                    if (property.ClrType == typeof(Guid)) {
                         property.SetValueConverter(guidConverter);
                     }
-                    else if (property.ClrType == typeof(Guid?))
-                    {
+                    else if (property.ClrType == typeof(Guid?)) {
                         property.SetValueConverter(nullableGuidConverter);
                     }
                 }
             }
         }
-        
+
         public async Task SeedDataAsync() {
             // avoid re-seeding
-            if (Files.Any()) return;
-            
+            if (Files.Any()) {
+                return;
+            }
 
             await SeedFilesAsync();
             await SeedTagsAsync();
@@ -77,7 +76,10 @@ namespace Domain {
 
         private async Task SeedFilesAsync() {
             var dbPath = new FileInfo(Database.GetDatabasePath());
-            if (dbPath == null) throw new ArgumentNullException($"Cannot seed to database at null path");
+            if (dbPath == null) {
+                throw new ArgumentNullException($"Cannot seed to database at null path");
+            }
+
             var absoluteFiles = FileSystemRepository.GetAllFilePaths(dbPath.DirectoryName!);
             var relativeFiles = absoluteFiles.Select(f => Path.GetRelativePath(dbPath.DirectoryName!, f)).ToList();
             var excludedFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {

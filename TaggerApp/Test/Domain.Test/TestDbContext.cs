@@ -1,6 +1,9 @@
 ﻿using System.Reflection;
+
 using Domain.Entities;
+
 using Microsoft.EntityFrameworkCore;
+
 using File = Domain.Entities.File;
 
 namespace Domain.Test;
@@ -12,7 +15,7 @@ public class TestDbContext : DbContext {
     public DbSet<TagOnFileValue> TagOnFileValues => Set<TagOnFileValue>();
 
     public TestDbContext(DbContextOptions<TestDbContext> options)
-        : base(options) {}
+        : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         foreach (var entity in Assembly

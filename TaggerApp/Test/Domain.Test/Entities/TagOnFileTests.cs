@@ -1,19 +1,20 @@
 ﻿using Domain.Entities;
+
 using FluentAssertions;
+
 using Microsoft.EntityFrameworkCore;
+
 using File = Domain.Entities.File;
 
 namespace Domain.Test.Entities;
 
 [TestFixture]
-public class TagOnFileTests
-{
+public class TagOnFileTests {
     private DbContextOptions<TestDbContext> _options = null!;
     private TestDbContext _context = null!;
 
     [SetUp]
-    public void SetUp()
-    {
+    public void SetUp() {
         _options = new DbContextOptionsBuilder<TestDbContext>()
             .UseSqlite("Filename=:memory:")
             .Options;
@@ -24,22 +25,19 @@ public class TagOnFileTests
     }
 
     [TearDown]
-    public void TearDown()
-    {
+    public void TearDown() {
         _context.Database.CloseConnection();
         _context.Dispose();
     }
 
     [Test, CustomAutoData]
-    public void Can_Create_TagOnFile_With_Value(File file, Tag tag, string value)
-    {
+    public void Can_Create_TagOnFile_With_Value(File file, Tag tag, string value) {
         // Arrange
         _context.Files.Add(file);
         _context.Tags.Add(tag);
         _context.SaveChanges();
 
-        var tagOnFile = new TagOnFile(tag.Id, file.Id)
-        {
+        var tagOnFile = new TagOnFile(tag.Id, file.Id) {
             File = file,
             Tag = tag,
             Value = new TagOnFileValue(file.Id, tag.Id, value)

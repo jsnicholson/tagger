@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -7,12 +8,12 @@ namespace Domain.Entities;
 
 [Table("TagOnFile")]
 public class TagOnFile : Entity {
-    public TagOnFile() {} // EF-compatible constructor
+    public TagOnFile() { } // EF-compatible constructor
     public TagOnFile(Guid tagId, Guid fileId) {
         TagId = tagId;
         FileId = fileId;
     }
-    
+
     [Required]
     [Column("TagId")]
     public Guid TagId { get; set; }
@@ -30,7 +31,7 @@ public class TagOnFile : Entity {
 
     public override void ConfigureEntity(ModelBuilder modelBuilder) {
         var builder = modelBuilder.Entity<TagOnFile>();
-        
+
         builder.HasKey(nameof(TagId), nameof(FileId));
 
         builder.HasOne(t => t.File)
@@ -42,7 +43,7 @@ public class TagOnFile : Entity {
             .WithMany(tg => tg.TagOnFiles) // <-- match `Tag`'s collection
             .HasForeignKey(t => t.TagId)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         builder.HasOne(t => t.Value)
             .WithOne(v => v.TagOnFile)
             .HasForeignKey<TagOnFileValue>(nameof(TagId), nameof(FileId))
@@ -51,8 +52,7 @@ public class TagOnFile : Entity {
     }
 }
 
-public readonly struct TagOnFileId(Guid tagId, Guid fileId) : IEquatable<TagOnFileId>
-{
+public readonly struct TagOnFileId(Guid tagId, Guid fileId) : IEquatable<TagOnFileId> {
     public Guid TagId { get; } = tagId;
     public Guid FileId { get; } = fileId;
 

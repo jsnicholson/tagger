@@ -1,5 +1,6 @@
-﻿using Domain;
-using System.CommandLine;
+﻿using System.CommandLine;
+
+using Domain;
 
 namespace Cli.Commands;
 

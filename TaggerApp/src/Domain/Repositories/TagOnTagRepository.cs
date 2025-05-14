@@ -1,6 +1,5 @@
 ﻿namespace Domain.Repositories;
 
-public class TagOnTagRepository
-{
-    
+public class TagOnTagRepository {
+
 }

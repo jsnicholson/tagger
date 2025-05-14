@@ -1,17 +1,17 @@
 ﻿using Domain.Entities;
+
 using FluentAssertions;
+
 using File = Domain.Entities.File;
 
 namespace Domain.Test.Entities;
 
 public class TagOnFileValueTests : BaseTest {
     [Test, CustomAutoData]
-    public async Task CanCreateTagOnFileValue(Tag tag, File file, string value)
-    {
+    public async Task CanCreateTagOnFileValue(Tag tag, File file, string value) {
         var tagOnFile = new TagOnFile(tag.Id, file.Id) { Tag = tag, File = file };
 
-        var tagOnFileValue = new TagOnFileValue(tag.Id, file.Id, value)
-        {
+        var tagOnFileValue = new TagOnFileValue(tag.Id, file.Id, value) {
             TagOnFile = tagOnFile
         };
 

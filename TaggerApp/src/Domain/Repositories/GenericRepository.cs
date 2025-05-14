@@ -11,8 +11,7 @@ namespace Domain.Repositories {
         Task DeleteAsync(IEnumerable<T> entities);
     }
     public class GenericRepository<T>(DbContext context) : IGenericRepository<T>
-        where T : class
-    {
+        where T : class {
         protected readonly DbContext Context = context;
         protected readonly DbSet<T> DbSet = context.Set<T>();
 
@@ -35,20 +34,17 @@ namespace Domain.Repositories {
             await Context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(IEnumerable<T> entities)
-        {
+        public async Task UpdateAsync(IEnumerable<T> entities) {
             DbSet.UpdateRange(entities);
             await Context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(T entity)
-        {
+        public async Task DeleteAsync(T entity) {
             DbSet.Remove(entity);
             await Context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(IEnumerable<T> entities)
-        {
+        public async Task DeleteAsync(IEnumerable<T> entities) {
             DbSet.RemoveRange(entities);
             await Context.SaveChangesAsync();
         }

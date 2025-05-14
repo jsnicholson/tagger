@@ -5,12 +5,12 @@ namespace Domain.Entities;
 
 [Table("File")]
 public class File : Entity {
-    public File() {} // test-compatible constructor
+    public File() { } // test-compatible constructor
 
     public File(string path) {
         Path = path;
     }
-    
+
     [Key]
     [Required]
     [Column("Id")]

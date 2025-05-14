@@ -1,18 +1,16 @@
 ﻿using Domain.Entities;
+
 using FluentAssertions;
 
 namespace Domain.Test.Entities;
 
-public class TagOnTagTests : BaseTest
-{
+public class TagOnTagTests : BaseTest {
     [Test]
-    public void CanCreateTagOnTag()
-    {
+    public void CanCreateTagOnTag() {
         // Arrange
         var tagger = new Tag("tagger");
         var tagged = new Tag("tagged");
-        var tagOnTag = new TagOnTag(tagger.Id, tagged.Id)
-        {
+        var tagOnTag = new TagOnTag(tagger.Id, tagged.Id) {
             Tagger = tagger,
             Tagged = tagged
         };

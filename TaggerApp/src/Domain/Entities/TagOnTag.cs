@@ -1,13 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Entities;
 
 [Table("TagOnTag")]
 public class TagOnTag(Guid taggerId, Guid taggedId) : Entity {
-    public TagOnTag() : this(Guid.Empty, Guid.Empty) {} // test-compatible constructor
-    
+    public TagOnTag() : this(Guid.Empty, Guid.Empty) { } // test-compatible constructor
+
     [Required]
     [Column("TaggerId")]
     public Guid TaggerId { get; set; } = taggerId;
@@ -15,10 +16,10 @@ public class TagOnTag(Guid taggerId, Guid taggedId) : Entity {
     [Required]
     [Column("TaggedId")]
     public Guid TaggedId { get; set; } = taggedId;
-    
+
     [NotMapped]
     public TagOnTagId Id => new(TaggerId, TaggedId);
-    
+
     // navigation properties
     public Tag Tagger { get; set; } = null!;
     public Tag Tagged { get; set; } = null!;
@@ -40,8 +41,7 @@ public class TagOnTag(Guid taggerId, Guid taggedId) : Entity {
     }
 }
 
-public readonly struct TagOnTagId(Guid taggerId, Guid taggedId) : IEquatable<TagOnTagId>
-{
+public readonly struct TagOnTagId(Guid taggerId, Guid taggedId) : IEquatable<TagOnTagId> {
     public Guid TaggerId { get; } = taggerId;
     public Guid TaggedId { get; } = taggedId;
 

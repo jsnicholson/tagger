@@ -15,11 +15,13 @@ public class DatabaseManager(TagDbContextFactory dbContextFactory) : IDatabaseMa
             Debug.WriteLine("Manifest already exists");
             return;
         }
-        if (File.Exists(path.FullName) && overwrite)
+        if (File.Exists(path.FullName) && overwrite) {
             DeleteDatabase(path);
-        
-        if (!Directory.Exists(path.DirectoryName) && path.DirectoryName != null)
+        }
+
+        if (!Directory.Exists(path.DirectoryName) && path.DirectoryName != null) {
             Directory.CreateDirectory(path.DirectoryName);
+        }
 
         dbContextFactory.SetDatabasePath(path.FullName);
 
@@ -29,8 +31,7 @@ public class DatabaseManager(TagDbContextFactory dbContextFactory) : IDatabaseMa
         Debug.WriteLine($"Database created at: {path.FullName}");
     }
 
-    public async Task InitialiseDatabaseAsync(FileInfo path, bool overwrite)
-    {
+    public async Task InitialiseDatabaseAsync(FileInfo path, bool overwrite) {
         await CreateDatabaseAsync(path, overwrite);
 
         await using var context = ConnectToDatabase(path);
@@ -39,7 +40,7 @@ public class DatabaseManager(TagDbContextFactory dbContextFactory) : IDatabaseMa
     }
 
     public TagDbContext ConnectToDatabase(FileInfo path) {
-        if(!File.Exists(path.FullName)) {
+        if (!File.Exists(path.FullName)) {
             throw new FileNotFoundException("Database not found", path.FullName);
         }
 

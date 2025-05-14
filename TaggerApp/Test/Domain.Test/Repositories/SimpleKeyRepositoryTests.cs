@@ -1,24 +1,24 @@
 ﻿using Domain.Repositories;
+
 using FluentAssertions;
+
 using Microsoft.EntityFrameworkCore;
+
 using File = Domain.Entities.File;
 
 namespace Domain.Test.Repositories;
 
 [TestFixture]
-public class SimpleKeyRepositoryTests : BaseTest
-{
+public class SimpleKeyRepositoryTests : BaseTest {
     private ISimpleKeyRepository<File> _repository = null!;
 
     [SetUp]
-    public void Init()
-    {
+    public void Init() {
         _repository = new SimpleKeyRepository<File>(DbContext);
     }
 
     [Test, CustomAutoData]
-    public async Task GetByIdAsync_ReturnsCorrectEntity(File file)
-    {
+    public async Task GetByIdAsync_ReturnsCorrectEntity(File file) {
         DbContext.Files.Add(file);
         await DbContext.SaveChangesAsync();
 
@@ -30,8 +30,7 @@ public class SimpleKeyRepositoryTests : BaseTest
     }
 
     [Test, CustomAutoData]
-    public async Task GetByIdsAsync_ReturnsCorrectEntities(List<File> files)
-    {
+    public async Task GetByIdsAsync_ReturnsCorrectEntities(List<File> files) {
         DbContext.Files.AddRange(files);
         await DbContext.SaveChangesAsync();
 
@@ -43,8 +42,7 @@ public class SimpleKeyRepositoryTests : BaseTest
     }
 
     [Test, CustomAutoData]
-    public async Task DeleteByIdAsync_RemovesEntity(File file)
-    {
+    public async Task DeleteByIdAsync_RemovesEntity(File file) {
         DbContext.Files.Add(file);
         await DbContext.SaveChangesAsync();
 
@@ -55,8 +53,7 @@ public class SimpleKeyRepositoryTests : BaseTest
     }
 
     [Test]
-    public async Task DeleteByIdAsync_ThrowsIfEntityNotFound()
-    {
+    public async Task DeleteByIdAsync_ThrowsIfEntityNotFound() {
         var nonExistentId = Guid.NewGuid();
 
         var act = async () => await _repository.DeleteByIdAsync(nonExistentId);
@@ -65,8 +62,7 @@ public class SimpleKeyRepositoryTests : BaseTest
     }
 
     [Test, CustomAutoData]
-    public async Task DeleteByIdsAsync_RemovesEntities(List<File> files)
-    {
+    public async Task DeleteByIdsAsync_RemovesEntities(List<File> files) {
         DbContext.Files.AddRange(files);
         await DbContext.SaveChangesAsync();
 

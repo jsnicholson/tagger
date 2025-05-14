@@ -1,9 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Domain
-{
-    public class TagDbContextFactory(IServiceProvider serviceProvider)
-    {
+namespace Domain {
+    public class TagDbContextFactory(IServiceProvider serviceProvider) {
         private readonly IServiceProvider _serviceProvider = serviceProvider;
         private string? _databasePath;
 
@@ -12,8 +10,9 @@ namespace Domain
         }
 
         public TagDbContext CreateDbContext() {
-            if (string.IsNullOrEmpty(_databasePath))
+            if (string.IsNullOrEmpty(_databasePath)) {
                 throw new InvalidOperationException("Database path is not set!");
+            }
 
             var optionsBuilder = new DbContextOptionsBuilder<TagDbContext>();
             optionsBuilder.UseSqlite($"Data Source={_databasePath}");

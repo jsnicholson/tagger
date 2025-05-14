@@ -1,12 +1,13 @@
-﻿using Domain;
-using System.CommandLine;
+﻿using System.CommandLine;
+
+using Domain;
 
 namespace Cli.Commands;
 
 public class BaseCommand : Command {
     protected readonly IDatabaseManager _databaseManager;
     public static readonly Option<FileInfo> ManifestOption = new(
-        [ "--manifest", "-m" ],
+        ["--manifest", "-m"],
         "Path to the manifest file"
     ) {
         IsRequired = true,

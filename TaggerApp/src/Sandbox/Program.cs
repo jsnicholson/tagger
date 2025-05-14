@@ -1,14 +1,13 @@
 ﻿using Domain;
 using Domain.Extensions;
 using Domain.Library;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Sandbox;
 
-class Program
-{
-    static void Main()
-    {
+class Program {
+    static void Main() {
         var path = "C:\\Program Files\\word.jpg";
         Console.WriteLine(FileTypeMap.GetFileType(path));
 

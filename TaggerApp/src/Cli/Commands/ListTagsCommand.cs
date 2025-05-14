@@ -1,9 +1,11 @@
-﻿using Domain.Repositories;
-using Domain;
-using System.CommandLine;
+﻿using System.CommandLine;
 using System.CommandLine.Completions;
-using Microsoft.EntityFrameworkCore;
+
+using Domain;
 using Domain.Entities;
+using Domain.Repositories;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace Cli.Commands;
 
@@ -28,7 +30,8 @@ class ListTagsCommand : BaseCommand {
         IEnumerable<Tag> tags;
         if (string.IsNullOrEmpty(fileInput)) {
             tags = await tagRepository.GetAllAsync();
-        } else {
+        }
+        else {
             // Try to match by ID or file name
             var file = await context.Files
                 .FirstOrDefaultAsync(f => f.Id.ToString() == fileInput || f.Path.Contains(fileInput));
@@ -41,18 +44,20 @@ class ListTagsCommand : BaseCommand {
             tags = await tagRepository.GetTagsForFileAsync(file.Id);
         }
 
-        if(!tags.Any()) {
+        if (!tags.Any()) {
             Console.WriteLine($"No tags found for file");
         }
 
-        foreach(var tag in tags) {
+        foreach (var tag in tags) {
             Console.WriteLine($"{tag.Id} | {tag.Name}");
         }
     }
 
     private IEnumerable<string> GetFileCompletions(CompletionContext context) {
         var manifestArg = context.ParseResult.GetValueForOption(ManifestOption);
-        if(manifestArg == null) return Enumerable.Empty<string>();
+        if (manifestArg == null) {
+            return Enumerable.Empty<string>();
+        }
 
         using var dbContext = OpenManifest(manifestArg);
         var files = dbContext.Files

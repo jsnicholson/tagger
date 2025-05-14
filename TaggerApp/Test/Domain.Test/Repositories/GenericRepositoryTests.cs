@@ -1,24 +1,24 @@
 ﻿using Domain.Repositories;
+
 using FluentAssertions;
+
 using Microsoft.EntityFrameworkCore;
+
 using File = Domain.Entities.File;
 
 namespace Domain.Test.Repositories;
 
 [TestFixture]
-public class GenericRepositoryTests : BaseTest
-{
+public class GenericRepositoryTests : BaseTest {
     private IGenericRepository<File> _repository = null!;
 
     [SetUp]
-    public void Init()
-    {
+    public void Init() {
         _repository = new GenericRepository<File>(DbContext);
     }
 
     [Test, CustomAutoData]
-    public async Task AddAsync_AddsSingleEntity(File file)
-    {
+    public async Task AddAsync_AddsSingleEntity(File file) {
         await _repository.AddAsync(file);
 
         var result = await DbContext.Files.FindAsync(file.Id);
@@ -27,8 +27,7 @@ public class GenericRepositoryTests : BaseTest
     }
 
     [Test, CustomAutoData]
-    public async Task AddAsync_AddsMultipleEntities(List<File> files)
-    {
+    public async Task AddAsync_AddsMultipleEntities(List<File> files) {
         await _repository.AddAsync(files);
 
         var result = await DbContext.Files.ToListAsync();
@@ -36,8 +35,7 @@ public class GenericRepositoryTests : BaseTest
     }
 
     [Test, CustomAutoData]
-    public async Task GetAllAsync_ReturnsAllEntities(List<File> files)
-    {
+    public async Task GetAllAsync_ReturnsAllEntities(List<File> files) {
         DbContext.Files.AddRange(files);
         await DbContext.SaveChangesAsync();
 
@@ -48,8 +46,7 @@ public class GenericRepositoryTests : BaseTest
     }
 
     [Test, CustomAutoData]
-    public async Task UpdateAsync_UpdatesEntity(File file, string newPath)
-    {
+    public async Task UpdateAsync_UpdatesEntity(File file, string newPath) {
         DbContext.Files.Add(file);
         await DbContext.SaveChangesAsync();
 
@@ -61,13 +58,13 @@ public class GenericRepositoryTests : BaseTest
     }
 
     [Test, CustomAutoData]
-    public async Task UpdateAsync_UpdatesMultipleEntities(List<File> files, string updatedPath)
-    {
+    public async Task UpdateAsync_UpdatesMultipleEntities(List<File> files, string updatedPath) {
         DbContext.Files.AddRange(files);
         await DbContext.SaveChangesAsync();
 
-        foreach (var file in files)
+        foreach (var file in files) {
             file.Path = updatedPath;
+        }
 
         await _repository.UpdateAsync(files);
 
@@ -76,8 +73,7 @@ public class GenericRepositoryTests : BaseTest
     }
 
     [Test, CustomAutoData]
-    public async Task DeleteAsync_RemovesEntity(File file)
-    {
+    public async Task DeleteAsync_RemovesEntity(File file) {
         DbContext.Files.Add(file);
         await DbContext.SaveChangesAsync();
 
@@ -88,8 +84,7 @@ public class GenericRepositoryTests : BaseTest
     }
 
     [Test, CustomAutoData]
-    public async Task DeleteAsync_RemovesMultipleEntities(List<File> files)
-    {
+    public async Task DeleteAsync_RemovesMultipleEntities(List<File> files) {
         DbContext.Files.AddRange(files);
         await DbContext.SaveChangesAsync();
 

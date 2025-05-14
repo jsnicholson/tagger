@@ -1,30 +1,30 @@
 ﻿using Domain.Entities;
 using Domain.Repositories;
+
 using FluentAssertions;
+
 using Microsoft.EntityFrameworkCore;
+
 using File = Domain.Entities.File;
 
 namespace Domain.Test.Repositories;
 
 [TestFixture]
-public class CompositeKeyRepositoryTests : BaseTest
-{
+public class CompositeKeyRepositoryTests : BaseTest {
     private ICompositeKeyRepository<TagOnFile, TagOnFileId> _repository = null!;
 
     [SetUp]
-    public void Init()
-    {
+    public void Init() {
         _repository = new CompositeKeyRepository<TagOnFile, TagOnFileId>(DbContext, id => [id.TagId, id.FileId]);
         DbContext.SaveChanges();
     }
 
     [Test, CustomAutoData]
-    public async Task GetByIdAsync_ReturnsCorrectEntity(Tag tag, File file)
-    {
+    public async Task GetByIdAsync_ReturnsCorrectEntity(Tag tag, File file) {
         DbContext.Tags.Add(tag);
         DbContext.Files.Add(file);
         await DbContext.SaveChangesAsync();
-        
+
         var tagOnFile = new TagOnFile(tag.Id, file.Id);
         DbContext.TagsOnFiles.Add(tagOnFile);
         await DbContext.SaveChangesAsync();
@@ -37,12 +37,11 @@ public class CompositeKeyRepositoryTests : BaseTest
     }
 
     [Test, CustomAutoData]
-    public async Task GetByIdsAsync_ReturnsCorrectEntities(List<Tag> tags, List<File> files)
-    {
+    public async Task GetByIdsAsync_ReturnsCorrectEntities(List<Tag> tags, List<File> files) {
         DbContext.Tags.AddRange(tags);
         DbContext.Files.AddRange(files);
         await DbContext.SaveChangesAsync();
-        
+
         var tagsOnFiles = tags.Zip(files, (t, f) => new TagOnFile(t.Id, f.Id)).ToList();
         DbContext.TagsOnFiles.AddRange(tagsOnFiles);
         await DbContext.SaveChangesAsync();
@@ -55,12 +54,11 @@ public class CompositeKeyRepositoryTests : BaseTest
     }
 
     [Test, CustomAutoData]
-    public async Task DeleteByIdAsync_RemovesEntity( Tag tag, File file)
-    {
+    public async Task DeleteByIdAsync_RemovesEntity(Tag tag, File file) {
         DbContext.Tags.Add(tag);
         DbContext.Files.Add(file);
         await DbContext.SaveChangesAsync();
-        
+
         var tagOnFile = new TagOnFile(tag.Id, file.Id);
         DbContext.TagsOnFiles.Add(tagOnFile);
         await DbContext.SaveChangesAsync();
@@ -72,8 +70,7 @@ public class CompositeKeyRepositoryTests : BaseTest
     }
 
     [Test]
-    public async Task DeleteByIdAsync_ThrowsIfEntityNotFound()
-    {
+    public async Task DeleteByIdAsync_ThrowsIfEntityNotFound() {
         var nonExistentId = new TagOnFileId(Guid.NewGuid(), Guid.NewGuid());
 
         var act = async () => await _repository.DeleteByIdAsync(nonExistentId);
@@ -82,12 +79,11 @@ public class CompositeKeyRepositoryTests : BaseTest
     }
 
     [Test, CustomAutoData]
-    public async Task DeleteByIdsAsync_RemovesEntities(List<Tag> tags, List<File> files)
-    {
+    public async Task DeleteByIdsAsync_RemovesEntities(List<Tag> tags, List<File> files) {
         DbContext.Tags.AddRange(tags);
         DbContext.Files.AddRange(files);
         await DbContext.SaveChangesAsync();
-        
+
         var tagsOnFiles = tags.Zip(files, (t, f) => new TagOnFile(t.Id, f.Id)).ToList();
         DbContext.TagsOnFiles.AddRange(tagsOnFiles);
         await DbContext.SaveChangesAsync();

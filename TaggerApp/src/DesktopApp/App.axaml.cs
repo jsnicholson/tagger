@@ -1,12 +1,16 @@
-﻿using Avalonia;
+﻿using System.IO;
+
+using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+
 using DesktopApp.ViewModels;
 using DesktopApp.Views;
+
 using Domain;
 using Domain.Extensions;
+
 using Microsoft.Extensions.DependencyInjection;
-using System.IO;
 
 namespace DesktopApp;
 

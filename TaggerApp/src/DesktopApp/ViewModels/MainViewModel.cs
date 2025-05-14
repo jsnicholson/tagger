@@ -1,14 +1,18 @@
-﻿using Avalonia.Controls;
-using Domain.Repositories;
-using DynamicData;
-using ReactiveUI;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
+
+using Avalonia.Controls;
+
+using Domain.Repositories;
+
+using DynamicData;
+
+using ReactiveUI;
 
 namespace DesktopApp.ViewModels;
 
@@ -74,8 +78,9 @@ public class MainViewModel : ViewModelBase {
 
         // Remove items no longer present
         var toRemove = FileItems.Where(vm => !newFileIds.Contains(vm.Id)).ToList();
-        foreach (var vm in toRemove)
+        foreach (var vm in toRemove) {
             FileItems.Remove(vm);
+        }
 
         // Add new items
         var existingIds = new HashSet<Guid>(FileItems.Select(vm => vm.Id));

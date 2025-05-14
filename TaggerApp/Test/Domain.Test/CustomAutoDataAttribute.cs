@@ -1,12 +1,13 @@
 ﻿using AutoFixture;
 using AutoFixture.NUnit3;
+
 using Domain.Entities;
+
 using File = Domain.Entities.File;
 
 namespace Domain.Test;
 
-public class CustomAutoDataAttribute() : AutoDataAttribute(() =>
-{
+public class CustomAutoDataAttribute() : AutoDataAttribute(() => {
     var fixture = new Fixture();
     fixture.Behaviors.Add(new OmitOnRecursionBehavior());
     fixture.Customize(new EntityCustomization());

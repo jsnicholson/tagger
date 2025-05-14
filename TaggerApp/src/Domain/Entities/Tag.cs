@@ -6,7 +6,7 @@ namespace Domain.Entities;
 
 [Table("Tag")]
 public class Tag : Entity {
-    public Tag() {} // test-compatible constructor
+    public Tag() { } // test-compatible constructor
     public Tag(string name) {
         Name = name;
     }

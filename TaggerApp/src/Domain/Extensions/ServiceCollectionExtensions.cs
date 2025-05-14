@@ -1,4 +1,5 @@
 ﻿using Domain.Repositories;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Domain.Extensions;

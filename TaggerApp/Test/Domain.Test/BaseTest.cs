@@ -1,16 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Domain.Test
-{
-    public class BaseTest
-    {
+namespace Domain.Test {
+    public class BaseTest {
         protected TagDbContext DbContext { get; private set; } = null!;
 
         private TagDbContextFactory _contextFactory;
 
         [SetUp]
-        public void SetUp()
-        {
+        public void SetUp() {
             // Initialize the factory with a database path for SQLite (you can provide a unique path for each test)
             _contextFactory = new TagDbContextFactory(new ServiceCollection().BuildServiceProvider());
             _contextFactory.SetDatabasePath($"DataSource=TestDb_{Guid.NewGuid()}.db");
@@ -23,8 +20,7 @@ namespace Domain.Test
         }
 
         [TearDown]
-        public void TearDown()
-        {
+        public void TearDown() {
             // Dispose of the DbContext and drop the SQLite database after the test
             DbContext.Dispose();
         }

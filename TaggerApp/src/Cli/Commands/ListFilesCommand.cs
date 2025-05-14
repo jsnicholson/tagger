@@ -1,11 +1,11 @@
-﻿using Domain;
+﻿using System.CommandLine;
+
+using Domain;
 using Domain.Repositories;
-using System.CommandLine;
 
 namespace Cli.Commands;
 
-public class ListFilesCommand : BaseCommand
-{
+public class ListFilesCommand : BaseCommand {
     public ListFilesCommand(IDatabaseManager databaseManager)
         : base("list-files", "List all files in manifest", databaseManager) {
         this.SetHandler(ListFilesAsync, ManifestOption);

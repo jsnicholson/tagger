@@ -1,6 +1,8 @@
-﻿using Avalonia.Controls;
+﻿using System;
+
+using Avalonia.Controls;
+
 using ReactiveUI;
-using System;
 
 namespace DesktopApp.ViewModels;
 

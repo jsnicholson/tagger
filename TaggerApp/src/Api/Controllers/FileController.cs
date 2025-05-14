@@ -1,4 +1,5 @@
 ﻿using HeyRed.Mime;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers {
@@ -24,7 +25,9 @@ namespace Api.Controllers {
             var baseUrl = $"{Request.Scheme}://{Request.Host}/api/file";
             var rng = new Random();
             var allFiles = Directory.EnumerateFiles(_fileFolderPath);
-            if (startIndex >= allFiles.Count()) return Ok(new List<string>());
+            if (startIndex >= allFiles.Count()) {
+                return Ok(new List<string>());
+            }
 
             var files = allFiles
                 .OrderBy(_ => rng.Next())
@@ -45,13 +48,14 @@ namespace Api.Controllers {
         [HttpGet("{fileName}")]
         public IActionResult GetFile(string fileName) {
             var filePath = Path.Combine(_fileFolderPath, fileName);
-            
-            if (!System.IO.File.Exists(filePath))
+
+            if (!System.IO.File.Exists(filePath)) {
                 return NotFound();
-            
+            }
+
             var file = System.IO.File.OpenRead(filePath);
             var contentType = MimeTypesMap.GetMimeType(fileName);
-            
+
             return File(file, contentType);
         }
     }
