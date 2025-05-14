@@ -2,7 +2,6 @@
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using File = Domain.Entities.File;
-using NUnit.Framework;
 
 namespace Domain.Test.Entities;
 
@@ -31,13 +30,10 @@ public class TagOnFileTests
         _context.Dispose();
     }
 
-    [Test]
-    public void Can_Create_TagOnFile_With_Value()
+    [Test, CustomAutoData]
+    public void Can_Create_TagOnFile_With_Value(File file, Tag tag, string value)
     {
         // Arrange
-        var file = new File("example.txt");
-        var tag = new Tag("rating");
-
         _context.Files.Add(file);
         _context.Tags.Add(tag);
         _context.SaveChanges();
@@ -46,7 +42,7 @@ public class TagOnFileTests
         {
             File = file,
             Tag = tag,
-            Value = new TagOnFileValue(file.Id, tag.Id, "5")
+            Value = new TagOnFileValue(file.Id, tag.Id, value)
         };
 
         _context.TagsOnFiles.Add(tagOnFile);
@@ -61,9 +57,9 @@ public class TagOnFileTests
 
         // Assert (FluentAssertions)
         loaded.Should().NotBeNull();
-        loaded!.Tag.Name.Should().Be("rating");
-        loaded.File.Path.Should().Be("example.txt");
+        loaded.Tag.Name.Should().Be(tag.Name);
+        loaded.File.Path.Should().Be(file.Path);
         loaded.Value.Should().NotBeNull();
-        loaded.Value!.Value.Should().Be("5");
+        loaded.Value!.Value.Should().Be(value);
     }
 }

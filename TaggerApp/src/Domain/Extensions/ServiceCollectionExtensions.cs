@@ -15,10 +15,6 @@ public static class ServiceCollectionExtensions {
             var factory = sp.GetRequiredService<TagDbContextFactory>();
             return new TagRepository(factory.CreateDbContext());
         });
-        services.AddScoped<ITagOnFileRepository>(sp => {
-            var factory = sp.GetRequiredService<TagDbContextFactory>();
-            return new TagOnFileRepository(factory.CreateDbContext());
-        });
 
         return services;
     }

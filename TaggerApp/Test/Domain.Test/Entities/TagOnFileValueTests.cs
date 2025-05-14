@@ -5,15 +5,12 @@ using File = Domain.Entities.File;
 namespace Domain.Test.Entities;
 
 public class TagOnFileValueTests : BaseTest {
-    [Test]
-    public void CanCreateTagOnFileValue()
+    [Test, CustomAutoData]
+    public async Task CanCreateTagOnFileValue(Tag tag, File file, string value)
     {
-        // Arrange
-        var file = new File("C:/example/file.txt");
-        var tag = new Tag("rating");
         var tagOnFile = new TagOnFile(tag.Id, file.Id) { Tag = tag, File = file };
 
-        var tagOnFileValue = new TagOnFileValue(file.Id, tag.Id, "5")
+        var tagOnFileValue = new TagOnFileValue(tag.Id, file.Id, value)
         {
             TagOnFile = tagOnFile
         };
@@ -23,15 +20,15 @@ public class TagOnFileValueTests : BaseTest {
         DbContext.Add(tag);
         DbContext.Add(tagOnFile);
         DbContext.Add(tagOnFileValue);
-        DbContext.SaveChanges();
+        await DbContext.SaveChangesAsync();
 
         // Assert
         tagOnFileValue.TagOnFile.Should().NotBeNull();
-        tagOnFileValue.Value.Should().Be("5");
+        tagOnFileValue.Value.Should().Be(value);
 
         // Verify the data was saved correctly in the database
         var savedValue = DbContext.Set<TagOnFileValue>().Single();
-        savedValue.Value.Should().Be("5");
+        savedValue.Value.Should().Be(value);
         savedValue.FileId.Should().Be(file.Id);
         savedValue.TagId.Should().Be(tag.Id);
     }

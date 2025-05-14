@@ -15,7 +15,11 @@ public class TagOnTag(Guid taggerId, Guid taggedId) : Entity {
     [Required]
     [Column("TaggedId")]
     public Guid TaggedId { get; set; } = taggedId;
-
+    
+    [NotMapped]
+    public TagOnTagId Id => new(TaggerId, TaggedId);
+    
+    // navigation properties
     public Tag Tagger { get; set; } = null!;
     public Tag Tagged { get; set; } = null!;
 
@@ -34,4 +38,24 @@ public class TagOnTag(Guid taggerId, Guid taggedId) : Entity {
             .HasForeignKey(t => t.TaggedId)
             .OnDelete(DeleteBehavior.Cascade);
     }
+}
+
+public readonly struct TagOnTagId(Guid taggerId, Guid taggedId) : IEquatable<TagOnTagId>
+{
+    public Guid TaggerId { get; } = taggerId;
+    public Guid TaggedId { get; } = taggedId;
+
+    public bool Equals(TagOnTagId other) =>
+        TaggerId.Equals(other.TaggerId) && TaggedId.Equals(other.TaggedId);
+
+    public override bool Equals(object? obj) =>
+        obj is TagOnTagId other && Equals(other);
+
+    public override int GetHashCode() =>
+        HashCode.Combine(TaggerId, TaggedId);
+
+    public static bool operator ==(TagOnTagId left, TagOnTagId right) => left.Equals(right);
+    public static bool operator !=(TagOnTagId left, TagOnTagId right) => !left.Equals(right);
+
+    public override string ToString() => $"({TaggerId}, {TaggedId})";
 }

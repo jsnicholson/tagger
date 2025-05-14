@@ -1,19 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace Domain.Repositories {
-    public interface IFileRepository : IGenericRepository<Entities.File>
-    {
-        public Task<IEnumerable<Entities.File>> GetFilesByTagAsync(Guid tagId);
-    }
+﻿namespace Domain.Repositories {
+    public interface IFileRepository : ISimpleKeyRepository<Entities.File> {}
     
     public class FileRepository(TagDbContext context)
-        : GenericRepository<Entities.File>(context), IFileRepository
-    {
-        public async Task<IEnumerable<Entities.File>> GetFilesByTagAsync(Guid tagId) {
-            return await context.TagsOnFiles
-                .Where(tof => tof.TagId == tagId)
-                .Select(tof => tof.File)
-                .ToListAsync();
-        }
-    }
+        : SimpleKeyRepository<Entities.File>(context), IFileRepository {}
 }

@@ -2,22 +2,19 @@
 
 namespace Domain.Repositories {
     public interface IGenericRepository<T> where T : class {
-        Task<T?> GetByIdAsync(Guid id);
         Task<IEnumerable<T>> GetAllAsync();
         Task AddAsync(T entity);
         Task AddAsync(IEnumerable<T> entities);
         Task UpdateAsync(T entity);
-        Task DeleteAsync(Guid id);
+        Task UpdateAsync(IEnumerable<T> entities);
+        Task DeleteAsync(T entity);
+        Task DeleteAsync(IEnumerable<T> entities);
     }
     public class GenericRepository<T>(DbContext context) : IGenericRepository<T>
         where T : class
     {
         protected readonly DbContext Context = context;
         protected readonly DbSet<T> DbSet = context.Set<T>();
-
-        public async Task<T?> GetByIdAsync(Guid id) {
-            return await DbSet.FindAsync(id);
-        }
 
         public async Task<IEnumerable<T>> GetAllAsync() {
             return await DbSet.ToListAsync();
@@ -38,12 +35,22 @@ namespace Domain.Repositories {
             await Context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Guid id) {
-            var entity = await DbSet.FindAsync(id);
-            if(entity != null) {
-                DbSet.Remove(entity);
-                await Context.SaveChangesAsync();
-            }
+        public async Task UpdateAsync(IEnumerable<T> entities)
+        {
+            DbSet.UpdateRange(entities);
+            await Context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(T entity)
+        {
+            DbSet.Remove(entity);
+            await Context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(IEnumerable<T> entities)
+        {
+            DbSet.RemoveRange(entities);
+            await Context.SaveChangesAsync();
         }
     }
 }

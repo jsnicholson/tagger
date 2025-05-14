@@ -8,7 +8,7 @@ namespace Domain.Test.Repositories;
 [TestFixture]
 public class GenericRepositoryTests : BaseTest
 {
-    private GenericRepository<File> _repository = null!;
+    private IGenericRepository<File> _repository = null!;
 
     [SetUp]
     public void Init()
@@ -16,95 +16,86 @@ public class GenericRepositoryTests : BaseTest
         _repository = new GenericRepository<File>(DbContext);
     }
 
-    [Test]
-    public async Task AddAsync_AddsSingleEntity()
+    [Test, CustomAutoData]
+    public async Task AddAsync_AddsSingleEntity(File file)
     {
-        var file = new File("/test/single.txt");
-
         await _repository.AddAsync(file);
 
         var result = await DbContext.Files.FindAsync(file.Id);
         result.Should().NotBeNull();
-        result!.Path.Should().Be("/test/single.txt");
+        result.Path.Should().Be(file.Path);
     }
 
-    [Test]
-    public async Task AddAsync_AddsMultipleEntities()
+    [Test, CustomAutoData]
+    public async Task AddAsync_AddsMultipleEntities(List<File> files)
     {
-        var files = new[]
-        {
-            new File("/test/file1.txt"),
-            new File("/test/file2.txt")
-        };
-
         await _repository.AddAsync(files);
 
         var result = await DbContext.Files.ToListAsync();
-        result.Should().HaveCount(2);
+        result.Should().HaveCount(files.Count);
     }
 
-    [Test]
-    public async Task GetByIdAsync_ReturnsCorrectEntity()
+    [Test, CustomAutoData]
+    public async Task GetAllAsync_ReturnsAllEntities(List<File> files)
     {
-        var file = new File("/test/getbyid.txt");
-        DbContext.Files.Add(file);
-        await DbContext.SaveChangesAsync();
-
-        var result = await _repository.GetByIdAsync(file.Id);
-
-        result.Should().NotBeNull();
-        result!.Path.Should().Be("/test/getbyid.txt");
-    }
-
-    [Test]
-    public async Task GetAllAsync_ReturnsAllEntities()
-    {
-        var files = new[]
-        {
-            new File("/all/one.txt"),
-            new File("/all/two.txt")
-        };
         DbContext.Files.AddRange(files);
         await DbContext.SaveChangesAsync();
 
         var result = (await _repository.GetAllAsync()).ToList();
 
-        result.Should().HaveCount(2);
+        result.Should().HaveCount(files.Count);
+        result.Select(f => f.Id).Should().BeEquivalentTo(files.Select(f => f.Id));
     }
 
-    [Test]
-    public async Task UpdateAsync_UpdatesEntity()
+    [Test, CustomAutoData]
+    public async Task UpdateAsync_UpdatesEntity(File file, string newPath)
     {
-        var file = new File("/old/path.txt");
         DbContext.Files.Add(file);
         await DbContext.SaveChangesAsync();
 
-        file.Path = "/new/path.txt";
+        file.Path = newPath;
         await _repository.UpdateAsync(file);
 
         var result = await DbContext.Files.FindAsync(file.Id);
-        result!.Path.Should().Be("/new/path.txt");
+        result!.Path.Should().Be(newPath);
     }
 
-    [Test]
-    public async Task DeleteAsync_RemovesEntity()
+    [Test, CustomAutoData]
+    public async Task UpdateAsync_UpdatesMultipleEntities(List<File> files, string updatedPath)
     {
-        var file = new File("/to/delete.txt");
+        DbContext.Files.AddRange(files);
+        await DbContext.SaveChangesAsync();
+
+        foreach (var file in files)
+            file.Path = updatedPath;
+
+        await _repository.UpdateAsync(files);
+
+        var updated = await DbContext.Files.ToListAsync();
+        updated.Should().OnlyContain(f => f.Path == updatedPath);
+    }
+
+    [Test, CustomAutoData]
+    public async Task DeleteAsync_RemovesEntity(File file)
+    {
         DbContext.Files.Add(file);
         await DbContext.SaveChangesAsync();
 
-        await _repository.DeleteAsync(file.Id);
+        await _repository.DeleteAsync(file);
 
         var result = await DbContext.Files.FindAsync(file.Id);
         result.Should().BeNull();
     }
 
-    [Test]
-    public async Task DeleteAsync_DoesNothingIfIdNotFound()
+    [Test, CustomAutoData]
+    public async Task DeleteAsync_RemovesMultipleEntities(List<File> files)
     {
-        // Just ensure it doesn’t throw
-        var nonExistentId = Guid.NewGuid();
-        var action = async () => await _repository.DeleteAsync(nonExistentId);
-        await action.Should().NotThrowAsync();
+        DbContext.Files.AddRange(files);
+        await DbContext.SaveChangesAsync();
+
+        await _repository.DeleteAsync(files);
+
+        var remaining = await DbContext.Files.ToListAsync();
+        remaining.Should().BeEmpty();
     }
 }
