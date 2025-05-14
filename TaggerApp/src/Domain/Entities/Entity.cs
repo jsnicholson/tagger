@@ -1,7 +1,4 @@
-﻿using System.Reflection;
-
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Entities;
 

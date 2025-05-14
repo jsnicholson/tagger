@@ -1,8 +1,6 @@
 ﻿using AutoFixture;
 using AutoFixture.NUnit3;
-
 using Domain.Entities;
-
 using File = Domain.Entities.File;
 
 namespace Domain.Test;

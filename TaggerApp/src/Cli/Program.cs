@@ -1,11 +1,7 @@
 ﻿using System.CommandLine;
-
 using Cli.Commands;
-
 using Domain;
 using Domain.Extensions;
-using Domain.Repositories;
-
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 

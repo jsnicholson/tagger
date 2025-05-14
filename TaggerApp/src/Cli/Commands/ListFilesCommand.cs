@@ -1,5 +1,4 @@
 ﻿using System.CommandLine;
-
 using Domain;
 using Domain.Repositories;
 

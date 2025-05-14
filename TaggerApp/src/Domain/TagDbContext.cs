@@ -1,12 +1,8 @@
-﻿using System.Linq.Expressions;
-using System.Reflection;
-
+﻿using System.Reflection;
 using Domain.Entities;
 using Domain.Extensions;
 using Domain.Repositories;
-
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Domain {

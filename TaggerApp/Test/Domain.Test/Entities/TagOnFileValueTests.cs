@@ -1,7 +1,5 @@
 ﻿using Domain.Entities;
-
 using FluentAssertions;
-
 using File = Domain.Entities.File;
 
 namespace Domain.Test.Entities;

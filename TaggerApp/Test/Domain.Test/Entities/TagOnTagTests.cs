@@ -1,5 +1,4 @@
 ﻿using Domain.Entities;
-
 using FluentAssertions;
 
 namespace Domain.Test.Entities;

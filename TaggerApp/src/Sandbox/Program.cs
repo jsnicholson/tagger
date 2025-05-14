@@ -1,7 +1,5 @@
-﻿using Domain;
-using Domain.Extensions;
+﻿using Domain.Extensions;
 using Domain.Library;
-
 using Microsoft.EntityFrameworkCore;
 
 namespace Sandbox;

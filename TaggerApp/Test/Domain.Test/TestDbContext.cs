@@ -1,9 +1,6 @@
 ﻿using System.Reflection;
-
 using Domain.Entities;
-
 using Microsoft.EntityFrameworkCore;
-
 using File = Domain.Entities.File;
 
 namespace Domain.Test;

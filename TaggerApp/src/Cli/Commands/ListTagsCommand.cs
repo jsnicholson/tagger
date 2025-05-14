@@ -1,10 +1,8 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Completions;
-
 using Domain;
 using Domain.Entities;
 using Domain.Repositories;
-
 using Microsoft.EntityFrameworkCore;
 
 namespace Cli.Commands;
