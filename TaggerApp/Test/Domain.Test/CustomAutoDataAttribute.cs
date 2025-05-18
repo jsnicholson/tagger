@@ -27,20 +27,16 @@ public class EntityCustomization : ICustomization {
             .Without(f => f.TagsOnFile));
 
         fixture.Customize<Tag>(c => c
-            .Without(t => t.TaggedBy)
-            .Without(t => t.TagsTagged)
+            .Without(t => t.TagsOnTag)
+            .Without(t => t.TagOnTags)
             .Without(t => t.TagOnFiles));
 
         fixture.Customize<TagOnFile>(c => c
             .Without(tof => tof.Tag)
-            .Without(tof => tof.File)
-            .Without(tof => tof.Value));
-
-        fixture.Customize<TagOnFileValue>(c => c
-            .Without(tofv => tofv.TagOnFile));
+            .Without(tof => tof.File));
 
         fixture.Customize<TagOnTag>(c => c
-            .Without(tot => tot.Tagger)
-            .Without(tot => tot.Tagged));
+            .Without(tot => tot.Source)
+            .Without(tot => tot.Target));
     }
 }

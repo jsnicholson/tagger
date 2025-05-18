@@ -20,7 +20,12 @@ public class Tag : Entity {
     public string Name { get; set; }
 
     // navigation property
-    public ICollection<TagOnFile> TagOnFiles { get; set; } = [];
-    public ICollection<TagOnTag> TagsTagged { get; set; } = []; // Tags this tag applies
-    public ICollection<TagOnTag> TaggedBy { get; set; } = [];    // Tags that apply to this tag
+    public ICollection<TagOnFile> TagOnFiles { get; set; } = []; // Relation between Tags and Files
+    public ICollection<File> TaggedFiles => TagOnFiles.Select(tof => tof.File).ToList(); // Files tagged by this tag
+    [NotMapped]
+    public ICollection<Tag> TagsTagged => TagOnTags.Select(t => t.Source).ToList();
+    [NotMapped]
+    public ICollection<Tag> TaggedBy => TagsOnTag.Select(t => t.Target).ToList();
+    public ICollection<TagOnTag> TagOnTags { get; set; } = []; // Tags this tag applies
+    public ICollection<TagOnTag> TagsOnTag { get; set; } = [];    // Tags that apply to this tag
 }

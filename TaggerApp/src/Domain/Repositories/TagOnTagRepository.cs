@@ -1,5 +1,8 @@
-﻿namespace Domain.Repositories;
+﻿using Domain.Entities;
 
-public class TagOnTagRepository {
+namespace Domain.Repositories;
 
-}
+public interface ITagOnTagRepository : ICompositeKeyRepository<TagOnTag, TagOnTagId> { }
+
+public class TagOnTagRepository(TagDbContext context)
+    : CompositeKeyRepository<TagOnTag, TagOnTagId>(context, id => [id.TaggerId, id.TaggerId]), ITagOnTagRepository { }

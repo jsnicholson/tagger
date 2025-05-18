@@ -10,7 +10,6 @@ namespace Domain {
         public DbSet<Tag> Tags { get; init; }
         public DbSet<Entities.File> Files { get; init; }
         public DbSet<TagOnFile> TagsOnFiles { get; init; }
-        public DbSet<TagOnFileValue> TagsOnFilesValues { get; init; }
         public DbSet<TagOnTag> TagsOnTags { get; init; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {

@@ -20,23 +20,24 @@ public class TagOnTag(Guid taggerId, Guid taggedId) : Entity {
     public TagOnTagId Id => new(TaggerId, TaggedId);
 
     // navigation properties
-    public Tag Tagger { get; set; } = null!;
-    public Tag Tagged { get; set; } = null!;
+    public Tag Source { get; set; } = null!;
+    public Tag Target { get; set; } = null!;
 
     public override void ConfigureEntity(ModelBuilder modelBuilder) {
         var builder = modelBuilder.Entity<TagOnTag>();
 
         builder.HasKey(t => new { t.TaggerId, t.TaggedId });
 
-        builder.HasOne(t => t.Tagger)
-            .WithMany(t => t.TagsTagged)
+        builder.HasOne(t => t.Source)
+            .WithMany(t => t.TagOnTags)
             .HasForeignKey(t => t.TaggerId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne(t => t.Tagged)
-            .WithMany(t => t.TaggedBy)
+        builder.HasOne(t => t.Target)
+            .WithMany(t => t.TagsOnTag)
             .HasForeignKey(t => t.TaggedId)
             .OnDelete(DeleteBehavior.Cascade);
+        
     }
 }
 

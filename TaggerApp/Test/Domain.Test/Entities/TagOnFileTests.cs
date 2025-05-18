@@ -28,7 +28,7 @@ public class TagOnFileTests {
     }
 
     [Test, CustomAutoData]
-    public void Can_Create_TagOnFile_With_Value(File file, Tag tag, string value) {
+    public void Can_Create_TagOnFile(File file, Tag tag, string value) {
         // Arrange
         _context.Files.Add(file);
         _context.Tags.Add(tag);
@@ -37,7 +37,6 @@ public class TagOnFileTests {
         var tagOnFile = new TagOnFile(tag.Id, file.Id) {
             File = file,
             Tag = tag,
-            Value = new TagOnFileValue(file.Id, tag.Id, value)
         };
 
         _context.TagsOnFiles.Add(tagOnFile);
@@ -47,14 +46,11 @@ public class TagOnFileTests {
         var loaded = _context.TagsOnFiles
             .Include(t => t.Tag)
             .Include(t => t.File)
-            .Include(t => t.Value)
             .FirstOrDefault(t => t.FileId == file.Id && t.TagId == tag.Id);
 
         // Assert (FluentAssertions)
         loaded.Should().NotBeNull();
         loaded.Tag.Name.Should().Be(tag.Name);
         loaded.File.Path.Should().Be(file.Path);
-        loaded.Value.Should().NotBeNull();
-        loaded.Value!.Value.Should().Be(value);
     }
 }

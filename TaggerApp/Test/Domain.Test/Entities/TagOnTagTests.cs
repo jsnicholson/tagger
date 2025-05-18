@@ -10,8 +10,8 @@ public class TagOnTagTests : BaseTest {
         var tagger = new Tag("tagger");
         var tagged = new Tag("tagged");
         var tagOnTag = new TagOnTag(tagger.Id, tagged.Id) {
-            Tagger = tagger,
-            Tagged = tagged
+            Source = tagger,
+            Target = tagged
         };
 
         // Act
@@ -21,8 +21,8 @@ public class TagOnTagTests : BaseTest {
         DbContext.SaveChanges();
 
         // Assert
-        tagOnTag.Tagger.Should().NotBeNull();
-        tagOnTag.Tagged.Should().NotBeNull();
+        tagOnTag.Source.Should().NotBeNull();
+        tagOnTag.Target.Should().NotBeNull();
 
         // Verify the data was saved correctly in the database
         var savedTagOnTag = DbContext.Set<TagOnTag>().Single();

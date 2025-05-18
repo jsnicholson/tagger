@@ -7,9 +7,10 @@ namespace Domain.Entities;
 [Table("TagOnFile")]
 public class TagOnFile : Entity {
     public TagOnFile() { } // EF-compatible constructor
-    public TagOnFile(Guid tagId, Guid fileId) {
+    public TagOnFile(Guid tagId, Guid fileId, string? value = null) {
         TagId = tagId;
         FileId = fileId;
+        Value = value;
     }
 
     [Required]
@@ -18,6 +19,9 @@ public class TagOnFile : Entity {
     [Required]
     [Column("FileId")]
     public Guid FileId { get; set; }
+    [Column("Value")]
+    [MaxLength(500)]
+    public string? Value { get; set; }
     [NotMapped]
     public TagOnFileId Id => new(TagId, FileId);
 
@@ -25,7 +29,6 @@ public class TagOnFile : Entity {
     // navigation properties
     public Tag Tag { get; set; } = null!;
     public File File { get; set; } = null!;
-    public TagOnFileValue? Value { get; set; }
 
     public override void ConfigureEntity(ModelBuilder modelBuilder) {
         var builder = modelBuilder.Entity<TagOnFile>();
@@ -38,15 +41,9 @@ public class TagOnFile : Entity {
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(t => t.Tag)
-            .WithMany(tg => tg.TagOnFiles) // <-- match `Tag`'s collection
+            .WithMany(t => t.TagOnFiles) // <-- match `Tag`'s collection
             .HasForeignKey(t => t.TagId)
             .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasOne(t => t.Value)
-            .WithOne(v => v.TagOnFile)
-            .HasForeignKey<TagOnFileValue>(nameof(TagId), nameof(FileId))
-            .OnDelete(DeleteBehavior.Cascade);
-
     }
 }
 

@@ -22,4 +22,6 @@ public class File : Entity {
 
     // navigation property
     public ICollection<TagOnFile> TagsOnFile { get; set; } = [];
+    [NotMapped]
+    public ICollection<Tag> TaggedBy => TagsOnFile.Select(tof => tof.Tag).ToList();
 }

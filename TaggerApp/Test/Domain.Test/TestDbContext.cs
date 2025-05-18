@@ -9,7 +9,6 @@ public class TestDbContext : DbContext {
     public DbSet<Tag> Tags => Set<Tag>();
     public DbSet<File> Files => Set<File>();
     public DbSet<TagOnFile> TagsOnFiles => Set<TagOnFile>();
-    public DbSet<TagOnFileValue> TagOnFileValues => Set<TagOnFileValue>();
 
     public TestDbContext(DbContextOptions<TestDbContext> options)
         : base(options) { }
